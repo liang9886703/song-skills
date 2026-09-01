@@ -1,0 +1,4 @@
+interface:
+  display_name: "Repo Evolution Audit"
+  short_description: "Summarize schema, flow, and git evolution"
+  default_prompt: "Use $repo-evolution-audit to trace key files, summarize format changes, and assess compatibility risks in this repo."

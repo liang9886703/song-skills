@@ -1,0 +1,4 @@
+interface:
+  display_name: "Vue Best Practices"
+  short_description: "Vue 3 Composition API best practices"
+  default_prompt: "Use $vue-best-practices to implement or review Vue 3 code with Composition API, TypeScript, and SFC conventions."

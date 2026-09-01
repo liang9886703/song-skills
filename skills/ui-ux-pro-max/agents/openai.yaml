@@ -1,0 +1,4 @@
+interface:
+  display_name: "UI Ux Pro Max"
+  short_description: "UI/UX design system and review rules"
+  default_prompt: "Use $ui-ux-pro-max to design or review a polished UI with accessibility, layout, typography, color, and interaction rules."

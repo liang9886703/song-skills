@@ -1,0 +1,4 @@
+interface:
+  display_name: "Nuxt"
+  short_description: "Nuxt 3 full-stack app best practices"
+  default_prompt: "Use $nuxt to implement or review Nuxt 3 code with routing, data fetching, server APIs, modules, and deployment best practices."

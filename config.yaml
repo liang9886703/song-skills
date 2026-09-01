@@ -4,9 +4,21 @@ sources:
   agents: /Users/songkuakua/.config/skillshare/agents
 mode: merge
 targets:
+  claude:
+    skills:
+      path: /Users/songkuakua/.claude/skills
+  codex:
+    skills:
+      path: /Users/songkuakua/.codex/skills
   hermes:
     skills:
       path: /Users/songkuakua/.hermes/skills
+  hermes-profile:
+    skills:
+      path: /Users/songkuakua/.hermes/profiles/chouno_hina/skills
+  openclaw:
+    skills:
+      path: /Users/songkuakua/.openclaw/skills
 ignore:
   - .DS_Store
   - .git/
