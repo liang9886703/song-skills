@@ -1,0 +1,15 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/runkids/skillshare/main/schemas/config.schema.json
+sources:
+  skills: /Users/songkuakua/.config/skillshare/skills
+  agents: /Users/songkuakua/.config/skillshare/agents
+mode: merge
+targets:
+  hermes:
+    skills:
+      path: /Users/songkuakua/.hermes/skills
+ignore:
+  - .DS_Store
+  - .git/
+  - __pycache__/
+audit:
+  block_threshold: CRITICAL
