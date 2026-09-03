@@ -2,6 +2,13 @@
 
 通常用户会提供一个或者多个代码目录，让分析其中的一个特定能力机制，再得出一篇分析报告。
 
+语言风格
+
+- 少用专门名词，只有没有合适的替代名词时才用专业名词；能用大白话就用大白话。大白话指的是计算机专业的普通从业者能听懂的说法，比如进程/线程/agent/幂等/鉴权，就是普通名词；坏的例子是"exactly-once 语义边界"这种只有特定领域才用的说法。
+- 讲解机制时不能说函数名/变量名/文件名/代码路径，重点说"干了什么"，而不是"哪个函数调了哪个函数"。
+- 正确：启动 opencode server 并读取 stdout 输出解析得到 url。
+- 错误：createOpencodeServer 用 cross-spawn 启动 opencode serve，默认 127.0.0.1:4096，并设置 OPENCODE_CONFIG_CONTENT，证据 packages/sdk/js/src/server.ts:22-40。它读取 stdout 的 opencode server listening 行解析 URL，证据 :43-70；超时、exit、error 会 reject，证据 :75-91。
+
 你可以自由探索完成这个任务，按照你认为合理的方式来输出报告。但是，输出的报告开头必须先写 `项目地址：<GitHub URL>`，并且至少要包含如下内容。项目地址必须来自用户提供的链接或仓库 Git remote 的核验结果，不能凭项目名猜测；若无法核验，明确写 `项目地址：未发现可核验的 GitHub 地址`。
 
 1. 能力版本表
