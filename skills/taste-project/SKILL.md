@@ -33,10 +33,10 @@ description: 阅读代码仓库并按约束产出分析报告。用户想初步�
 
 - 默认只产出 Markdown（`.md`）文档，并写入用户指定的路径；用户未指定路径时，才按下面的默认目录约定确定路径。
 - 除非用户当次明确要求，否则不要生成 PDF、HTML、DOCX、图片或其他导出版本，也不要因为历史偏好、其他 skill 或常见交付习惯而额外生成这些产物。
-- 默认文档根目录是 `$HOME/document/code/`。
-- 所有调研文档都必须放进 `$HOME/document/code/` 下的一个语义明确的子文件夹，禁止把 Markdown、PDF、图片或其他调研产物直接写在 `$HOME/document/code/` 根目录。
-- 按能力或主题调研时，文件夹使用能力或主题名，例如 `$HOME/document/code/coding-agent-记忆能力/`。
-- 按项目调研时，文件夹使用项目名，例如 `$HOME/document/code/hermes-agent/`。
+- 默认文档根目录是 `$HOME/github/blogV2/data/content/`。
+- 所有调研文档都必须放进 `$HOME/github/blogV2/data/content/` 下的一个语义明确的子文件夹，禁止把 Markdown、PDF、图片或其他调研产物直接写在 `$HOME/github/blogV2/data/content/` 根目录。
+- 按能力或主题调研时，文件夹使用能力或主题名，例如 `$HOME/github/blogV2/data/content/coding-agent-记忆能力/`。
+- 按项目调研时，文件夹使用项目名，例如 `$HOME/github/blogV2/data/content/hermes-agent/`。
 - 同一项调研产生的主文档、分项目文档、图片和导出文件统一放在这个文件夹内。跨多个项目研究同一能力时，优先使用能力或主题名作为文件夹名，并把各项目文档与汇总文档放在同一文件夹中。
 - 目标文件夹不存在时先创建，再写入文档。
 
@@ -65,4 +65,4 @@ description: 阅读代码仓库并按约束产出分析报告。用户想初步�
 3. 按默认目录约定确定或准备代码仓库位置与调研文档文件夹。
 4. 核验每个项目的 GitHub 地址。
 5. 按约束文件探索仓库并产出报告。
-6. 完成前检查：每份项目报告均已写明对应的 GitHub 地址；GitHub 链接下载的代码位于 `$HOME/github/`；所有调研产物位于 `$HOME/document/code/<能力、主题或项目名>/`，且没有文件直接落在 `$HOME/document/code/` 根目录。
+6. 完成前检查：每份项目报告均已写明对应的 GitHub 地址；GitHub 链接下载的代码位于 `$HOME/github/`；所有调研产物位于 `$HOME/github/blogV2/data/content/<能力、主题或项目名>/`，且没有文件直接落在 `$HOME/github/blogV2/data/content/` 根目录。
