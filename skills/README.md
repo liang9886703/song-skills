@@ -1,6 +1,6 @@
 # Skills 能力总览
 
-> 共 105 个 skill，按功能分类整理。自动生成于 2026-09-10。
+> 共 90 个 skill，按功能分类整理。自动生成于 2026-09-10。
 
 
 ## Agent 系统与配置（23）
@@ -124,26 +124,6 @@
 | Skill | 说明 |
 |-------|------|
 | `vpn-proxy-diagnostics` | Use when a VPN/proxy cannot reach a domain. |
-
-## 思维模型与人物视角（15）
-
-| Skill | 说明 |
-|-------|------|
-| `andrej-karpathy-perspective` | Andrej Karpathy的思维框架与表达方式。基于20+篇博文、16段深度访谈、100+条X帖子的系统蒸馏， 提炼6个核心心智模型、8条决策启发式、完整的中文输出适配和经典句式速查。 用途：作为… |
-| `elon-musk-perspective` | 马斯克的思维操作系统。基于传记、播客、推文、法庭证词、决策记录和外部批评的深度调研， 提炼5个核心心智模型、8条决策启发式和完整的表达DNA。 用途：作为思维顾问，用马斯克的视角分析问题、审视决策、拆… |
-| `feynman-perspective` | 理查德·费曼的思维框架与表达方式。基于40+个一手来源的深度调研， 提炼5个核心心智模型、8条决策启发式和完整的表达DNA。 用途：作为思维顾问，用费曼的视角分析问题、审视决策、提供反馈。 当用户提到… |
-| `ilya-sutskever-perspective` | Ilya Sutskever的思维框架与表达方式。基于12段一手对话、9篇学术论文、10小时宣誓证词、 27篇推荐阅读清单和14个权威二手来源的深度调研， 提炼6个核心心智模型、8条决策启发式和完整的… |
-| `llm-wiki` | Karpathy's LLM Wiki: build/query interlinked markdown KB. |
-| `mrbeast-perspective` | MrBeast（Jimmy Donaldson）的内容创造操作系统。基于泄露的36页内部培训手册、 6个深度播客、决策记录和外部批评的深度调研，提炼6个核心心智模型、8条决策启发式、 完整的标题/缩略… |
-| `munger-perspective` | 查理·芒格的思维框架与表达方式。基于《穷查理宝典》、伯克希尔/Daily Journal股东会、 USC/哈佛演讲、访谈记录、外部批评等50+来源的深度调研， 提炼5个核心心智模型、8条决策启发式和完… |
-| `naval-perspective` | Naval Ravikant的思维操作系统。基于著作、播客、推文、决策记录和外部批评的深度调研， 提炼5个核心心智模型、8条决策启发式和完整的表达DNA。 激活后沉浸式扮演Naval，直接以「我」的视… |
-| `paul-graham-perspective` | Paul Graham的思维框架与表达方式。基于200+篇essays、12个播客/访谈、 Twitter/X分析、7位核心批评者视角和完整人生时间线的深度调研， 提炼5个核心心智模型、8条决策启发式… |
-| `steve-jobs-perspective` | 史蒂夫·乔布斯(Steve Jobs)的思维框架与表达方式。基于Isaacson授权传记、Stanford演讲、 Lost Interview、D Conference系列、Make Somethin… |
-| `sun-yuchen-perspective` | 孙宇晨（Justin Sun / 孙割）的思维框架与行为逻辑。基于6个维度（著作、深度采访、表达DNA、 他者视角、决策记录、时间线）共1500+行调研素材的深度蒸馏， 提炼6个核心心智模型、8条决策… |
-| `taleb-perspective` | 塔勒布(Nassim Nicholas Taleb)的思维框架与表达方式。基于40+个来源的深度调研， 提炼6个核心心智模型、9条决策启发式和完整的表达DNA。 用途：作为思维顾问，用塔勒布的视角分析… |
-| `trump-perspective` | 唐纳德·特朗普（Donald Trump）的思维框架与行为逻辑。基于著作、长访谈、辩论、 心理分析、前幕僚回忆录、重大决策记录共6个维度的深度调研（320KB+原始资料）， 提炼6个核心心智模型、8条… |
-| `zhang-yiming-perspective` | 张一鸣（字节跳动/TikTok创始人）的思维框架与表达方式。基于6个维度（著作、深度访谈、 表达DNA、他者视角、决策记录、时间线）的调研，涵盖32个访谈片段、12个重大决策案例， 提炼5个核心心智模… |
-| `zhangxuefeng-perspective` | 张雪峰的思维框架与表达方式。基于5本著作、15+篇权威媒体深度采访、 30+条一手语录、11个关键决策记录和完整人生时间线的深度调研， 提炼5个核心心智模型、8条决策启发式和完整的表达DNA。 用途：… |
 
 ## 生活与其他（3）
 
