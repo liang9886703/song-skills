@@ -1,6 +1,6 @@
 # Skills 能力总览
 
-> 共 151 个 skill，按功能分类整理。自动生成于 2026-09-10。
+> 共 131 个 skill，按功能分类整理。自动生成于 2026-09-10。
 
 
 ## Agent 系统与配置（23）
@@ -107,36 +107,11 @@
 | `sketch` | Throwaway HTML mockups: 2-3 design variants to compare. |
 | `summarize` | Summarize URLs or files with the summarize CLI (web, PDFs, images, audio, YouTube). |
 
-## 文档与办公（14）
+## 文档与办公（1）
 
 | Skill | 说明 |
 |-------|------|
-| `airtable` | Airtable REST API via curl. Records CRUD, filters, upserts. |
-| `apple-notes` | Manage Apple Notes via memo CLI: create, search, edit. |
-| `apple-reminders` | Apple Reminders via remindctl: add, list, complete. |
-| `docx` | Create, read, edit Word .docx documents and templates. |
-| `linear` | Linear: manage issues, projects, teams via GraphQL + curl. |
-| `nano-pdf` | Edit text in existing PDFs via natural-language prompts. |
-| `notion` | Notion API + ntn CLI: pages, databases, markdown, Workers. |
-| `obsidian` | Read, search, create, and edit notes in the Obsidian vault. |
-| `ocr-and-documents` | Extract text from PDFs/scans (pymupdf, marker-pdf). |
-| `pdf` | Create, merge, split, fill, and secure PDF files. |
 | `pdf-to-markdown` | [Document Processing] Convert PDF files to Markdown with support for native text PDFs and scanned do… |
-| `powerpoint` | Create, read, edit .pptx decks, slides, notes, templates. |
-| `teams-meeting-pipeline` | Teams meeting summaries, job replay, Graph subscriptions. |
-| `xlsx` | Create, read, edit Excel .xlsx spreadsheets and CSVs. |
-
-## 研究与信息检索（7）
-
-| Skill | 说明 |
-|-------|------|
-| `arxiv` | Search arXiv papers by keyword, author, category, or ID. |
-| `blog-musings-authoring` | Use when creating file-backed personal blog musings. |
-| `blogwatcher` | Monitor blogs and RSS/Atom feeds via blogwatcher-cli tool. |
-| `chinese-filmography-research` | Use when verifying Chinese actor film, TV, or game credits. |
-| `gif-search` | Search/download GIFs from Tenor via curl + jq. |
-| `spotify` | Spotify: play, search, queue, manage playlists and devices. |
-| `youtube-content` | YouTube transcripts to summaries, threads, blogs. |
 
 ## 社交媒体与消息（6）
 
