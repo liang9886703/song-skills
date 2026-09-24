@@ -1,6 +1,6 @@
 # Skills 能力总览
 
-> 共 90 个 skill，按功能分类整理。自动生成于 2026-09-10。
+> 共 88 个 skill，按功能分类整理。自动生成于 2026-09-10。
 
 
 ## Agent 系统与配置（23）
@@ -125,10 +125,8 @@
 |-------|------|
 | `vpn-proxy-diagnostics` | Use when a VPN/proxy cannot reach a domain. |
 
-## 生活与其他（3）
+## 生活与其他（1）
 
 | Skill | 说明 |
 |-------|------|
-| `pokemon-player` | Play Pokemon via headless emulator + RAM reads. |
 | `pp-steam-web` | Every Steam Web API endpoint, plus a local SQLite store that turns friend playtimes, achievement pro… |
-| `x-mastery-mentor` | $10K/hr级X/Twitter运营导师。基于Nicolas Cole、Dickie Bush、Sahil Bloom、Justin Welsh、 Dan Koe、Alex Hormozi六位顶级创… |
