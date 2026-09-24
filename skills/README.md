@@ -1,58 +1,34 @@
 # Skills 能力总览
 
-> 共 175 个 skill，按功能分类整理。自动生成于 2026-09-10。
+> 共 151 个 skill，按功能分类整理。自动生成于 2026-09-10。
 
 
-## Agent 系统与配置（47）
+## Agent 系统与配置（23）
 
 | Skill | 说明 |
 |-------|------|
 | `agent-model-configuration` | Use when changing an agent model or reasoning strength. |
-| `agent-reach` | Give your AI agent eyes to see the entire internet. 17 platforms via CLI, MCP, curl, and Python scri… |
-| `agent-skill-library-management` | Use when installing, updating, validating, repairing, or deduplicating agent skills. |
-| `ai-product-tool-evaluation` | Use when comparing AI product tools. |
 | `batch-subagent-delegation` | Use when fan-out delegating many parallel subagent tasks. |
-| `claude-code` | Delegate coding to Claude Code CLI (features, PRs). |
-| `codex` | Delegate coding to OpenAI Codex CLI (features, PRs). |
 | `codex-desktop-network-debugging` | Use when Codex WebSockets fail behind Clash. |
-| `computer-use` | Drive the user's desktop in the background — clicking, typing, scrolling, dragging — without stealin… |
 | `debugging-hermes-tui-commands` | Debug Hermes TUI slash commands: Python, gateway, Ink UI. |
-| `external-cli-installation` | Use when installing external CLIs or skill managers. |
 | `find-skills` | Helps users discover and install agent skills when they ask questions like "how do I do X", "find a … |
-| `gateway-log-triage` | Use when triaging messaging gateway errors from logs. |
 | `handoff` | Compact the current conversation into a handoff document for another agent to pick up. |
 | `hermes-agent` | Use, configure, theme, extend, and orchestrate Hermes Agent. |
-| `hermes-agent-skill-authoring` | Author in-repo SKILL.md files: frontmatter and structure. |
 | `hermes-gateway-debugging` | Debug Hermes Gateway platform adapters and messaging delivery paths. |
-| `hermes-gateway-messaging-setup` | Configure and verify Hermes Gateway messaging channels such as Weixin/WeChat and Telegram using the … |
-| `hermes-gateway-operations` | Use when operating Hermes messaging gateways. |
-| `hermes-s6-container-supervision` | Modify, debug, or extend the s6-overlay supervision tree inside the Hermes Agent Docker image — addi… |
 | `hermes-update-recovery` | Recover and verify git-installed Hermes Agent updates, especially when `hermes update` is interrupte… |
 | `huashu-md-html` | 花叔的「md/html/docx 多向流水线」skill，四个能力 + 两种模式：(1) 用Microsoft markitdown把任意文件（PDF/DOCX/PPTX/XLSX/HTML/图片/音… |
-| `human-writing` | 通用中文创作与改稿 Skill。用于知乎回答、论坛长帖、公众号文章、博客、评论、人物故事、历史叙事、新闻与行业解读、科普、教程、评测、个人叙事、小说、故事、对白、口播和演讲稿。默认写成一个见过事、查过… |
 | `hv-analysis` | 横纵分析法（Horizontal-Vertical Analysis）深度研究Skill。由数字生命卡兹克提出，融合了索绪尔的历时-共时分析、社会科学的纵向-横截面研究设计、商学院案例研究法与竞争战略… |
-| `kanban-codex-lane` | Use when a Hermes Kanban worker wants to run Codex CLI as an isolated implementation lane while Herm… |
-| `kanban-orchestrator` | Decomposition playbook + anti-temptation rules for an orchestrator profile routing work through Kanb… |
-| `kanban-worker` | Pitfalls, examples, and edge cases for Hermes Kanban workers. The lifecycle itself is auto-injected … |
 | `khazix-writer` | 数字生命卡兹克（Khazix）的公众号长文写作skill。当用户需要撰写公众号文章、写稿子、续写文章、根据素材产出长文时使用。触发词包括但不限于：写文章、写稿子、帮我写、续写、扩写、公众号文章、长文、… |
-| `knowledge-base` | Shared foundation for Oracle & Corrector agents. Establishes the source hierarchy for resolving conf… |
 | `macos-computer-use` | Drive the macOS desktop in the background — screenshots, mouse, keyboard, scroll, drag — without ste… |
-| `messaging-channel-migration` | Migrate and verify Hermes/OpenClaw-style messaging gateway channels such as Telegram and Weixin with… |
 | `native-mcp` | MCP client: connect servers, register tools (stdio/HTTP). |
 | `ontology` | Typed knowledge graph for structured agent memory and composable skills. Use when creating/querying … |
-| `opencode` | Delegate coding to OpenCode CLI (features, PR review). |
 | `plan` | Write a markdown plan to .hermes/plans/; no execution. |
 | `project-context-discovery` | Use when local project source files have an unclear path. |
 | `prompt-log` | Extract conversation transcripts from AI coding session logs (Clawdbot, Claude Code, Codex). Use whe… |
-| `remember` | Capture knowledge to your Second Brain when triggered by "remember this", "save this", or "brain dum… |
-| `remember:init` | Initialize Remember Second Brain structure and configuration |
-| `remember:process` | Process unprocessed Claude Code sessions into your Second Brain |
-| `remember:status` | Show Remember Second Brain statistics and status |
 | `self-improving-agent` | A universal self-improving agent that learns from ALL skill experiences. Uses multi-memory architect… |
 | `skillshare-skill-management` | Use when assembling or syncing agent skills with skillshare. |
 | `subagent-driven-development` | Execute plans via delegate_task subagents (2-stage review). |
 | `taste-project` | 阅读代码仓库并按约束产出分析报告。用户想初步了解一个项目仓库、或想深入了解仓库里的某一个子能力时使用；用户只丢来一个仓库链接或目录、没说具体要什么时也用本 skill。 |
-| `touchdesigner-mcp` | Control TouchDesigner via twozero MCP. |
 | `xurl` | A curl-like CLI tool for making authenticated requests to the X (Twitter) API. Use this skill when y… |
 
 ## 开发工具与代码（39）
