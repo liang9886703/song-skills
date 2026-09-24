@@ -1,6 +1,6 @@
 # Skills 能力总览
 
-> 共 131 个 skill，按功能分类整理。自动生成于 2026-09-10。
+> 共 105 个 skill，按功能分类整理。自动生成于 2026-09-10。
 
 
 ## Agent 系统与配置（23）
@@ -113,53 +113,17 @@
 |-------|------|
 | `pdf-to-markdown` | [Document Processing] Convert PDF files to Markdown with support for native text PDFs and scanned do… |
 
-## 社交媒体与消息（6）
+## 社交媒体与消息（1）
 
 | Skill | 说明 |
 |-------|------|
 | `channel-ownership-and-proxy-diagnostics` | Use when channels fail across runtimes or proxy/TUN paths. |
-| `himalaya` | Himalaya CLI: IMAP/SMTP email from terminal. |
-| `imessage` | Send and receive iMessages/SMS via the imsg CLI on macOS. |
-| `messaging-network-diagnostics` | Use when messaging channels fail. |
-| `messaging-runtime-ownership` | Use when channel ownership is unclear across runtimes. |
-| `yuanbao` | Yuanbao (元宝) groups: @mention users, query info/members. |
 
-## 音视频与媒体（4）
+## 系统运维与网络（1）
 
 | Skill | 说明 |
 |-------|------|
-| `humanizer` | Humanize text: strip AI-isms and add real voice. |
-| `songsee` | Audio spectrograms/features (mel, chroma, MFCC) via CLI. |
-| `songwriting-and-ai-music` | Songwriting craft and Suno AI music prompts. |
-| `voice-chat-mode` | 在用户明确要求中文语音聊天或中文语音模式时激活。 |
-
-## 系统运维与网络（4）
-
-| Skill | 说明 |
-|-------|------|
-| `findmy` | Track Apple devices/AirTags via FindMy.app on macOS. |
-| `minecraft-modpack-server` | Host modded Minecraft servers (CurseForge, Modrinth). |
-| `openhue` | Control Philips Hue lights, scenes, rooms via OpenHue CLI. |
 | `vpn-proxy-diagnostics` | Use when a VPN/proxy cannot reach a domain. |
-
-## AI/ML 工具链（14）
-
-| Skill | 说明 |
-|-------|------|
-| `audiocraft-audio-generation` | AudioCraft: MusicGen text-to-music, AudioGen text-to-sound. |
-| `comfyui` | Generate images, video, and audio via diffusion workflows. |
-| `dspy` | DSPy: declarative LM programs, auto-optimize prompts, RAG. |
-| `evaluating-llms-harness` | lm-eval-harness: benchmark LLMs (MMLU, GSM8K, etc.). |
-| `godmode` | Jailbreak LLMs: Parseltongue, GODMODE, ULTRAPLINIAN. |
-| `heartmula` | HeartMuLa: Suno-like song generation from lyrics + tags. |
-| `huggingface-hub` | HuggingFace hf CLI: search/download/upload models, datasets. |
-| `llama-cpp` | llama.cpp local GGUF inference + HF Hub model discovery. |
-| `nano-banana-pro` | Generate/edit images with Nano Banana Pro (Gemini 3 Pro Image). Use for image create/modify requests… |
-| `obliteratus` | OBLITERATUS: abliterate LLM refusals (diff-in-means). |
-| `polymarket` | Query Polymarket: markets, prices, orderbooks, history. |
-| `segment-anything-model` | SAM: zero-shot image segmentation via points, boxes, masks. |
-| `serving-llms-vllm` | vLLM: high-throughput LLM serving, OpenAI API, quantization. |
-| `weights-and-biases` | W&B: log ML experiments, sweeps, model registry, dashboards. |
 
 ## 思维模型与人物视角（15）
 
