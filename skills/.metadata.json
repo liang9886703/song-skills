@@ -325,6 +325,41 @@
         "scripts/srt_to_transcript.py": "sha256:fe9de1d39243920f1c28fee519faa45c18230c67e41d1c34d4af83cdbc4f6b8b",
         "wechat-qrcode.jpg": "sha256:08ef797883d46c8dd02088f5f9ed3776b4435d3bbbd8c06d86b4ded1f190d36c"
       }
+    },
+    "blurt": {
+      "source": "github.com/AGIHunt/blurt/skills/blurt",
+      "type": "github-subdir",
+      "installed_at": "2026-10-18T13:29:20.687387+08:00",
+      "repo_url": "https://github.com/AGIHunt/blurt.git",
+      "subdir": "skills/blurt",
+      "version": "53171c4",
+      "tree_hash": "290fef6e97b15f5db71da9531e0c017e2e7847f3",
+      "file_hashes": {
+        "SKILL.md": "sha256:affe664149a03230e40195eeadb52025c5b889c043c3d19ccf944194aff97cdd",
+        "assets/MenuIconTemplate.png": "sha256:83477d5d8376ea64fab45edbe9b5f97405be1cdc6810013f1ecd8cd8ebf7641f",
+        "assets/MenuIconTemplate@2x.png": "sha256:3f7833f7d9e78b98c61caf2b5d72ae91ee2fbac502f16732f4b2c04802f8ac90",
+        "assets/icon.png": "sha256:c7fc790d7f6a83beb56c9aa76641515f350606daf2c04e6bd43407c8a3083c33",
+        "recorder/macos/BlurtRecorder.swift": "sha256:3ac9b00bcb6939d6fa8858247844231f44c58c64348334426c041d74a70cd4d3",
+        "reference/asr.md": "sha256:297aa2d53615239d7b1f8a512f77eabb539325718b10f1800a53edde60a07ff7",
+        "reference/docs.md": "sha256:e5d52296928169072422bb24a8791052baa23d4238368b0428d90ab63107dd1a",
+        "reference/export-feishu.md": "sha256:aeb05a00bd2980ef7ec9abd878b341eafe0679e74234ede2d84cfb079334b165",
+        "reference/export-other.md": "sha256:4400f26964939f8aefeeb1f09b5040f487a7430c6a3552f886f58b51d7552ac5",
+        "reference/lenses/idea.md": "sha256:457ba0cb75ccb54f6e02d8d484a74de497d8ee7cd0f001ab630aaaeb60f8f7fb",
+        "reference/lenses/issue.md": "sha256:df363ace4b9db510780df2f6dd559f7fa0fe8a2330455cbc9cd27d07f99dd8c9",
+        "reference/lenses/note.md": "sha256:09faf5d58d3dab0a69f15f2054fd747dd0eed28594e0b03eb33b51b416779d08",
+        "reference/lenses/task.md": "sha256:226e7b12b042703468846cf58b3e8fee886be6e9bb8439e0e8b45de38e18458e",
+        "reference/schema.md": "sha256:8348de1392ef7cac9972ac3945abcbeeea498d1ff0fdc526ce2289d3d1a76efa",
+        "scripts/_common.py": "sha256:a7b33a23633774147baa1eb12f5151596f7131b0c578e8ce075b332d490d0738",
+        "scripts/doctor.py": "sha256:f02e133ec7ce5dcd3c1df7eddda452adf433d974a2a995e404face7435210086",
+        "scripts/export_local.py": "sha256:0b8bab67200788dd4ba37872513561974445a295eaeb1db8673f33170bab335a",
+        "scripts/feishu.py": "sha256:f261d3460724abafc3087991a495ea6206f21e879d3cd28da159c5d23a0f5c81",
+        "scripts/frames.py": "sha256:f139f4e4a32bd4b8972476f026f512e6d60df6b1f4bc6d6629eabc9202d8767d",
+        "scripts/record.py": "sha256:76dee8a8748926614ef6f51d3d6f5b411ae3828f9e0a34edf9a690a7fed493ef",
+        "scripts/review.html": "sha256:af339f07d9f852ab7071bbaafacd415991142629dcc761073400388f77eb51ca",
+        "scripts/review.py": "sha256:053438cf5e79b1e83e51a3652c6f7bca4ecefebb6321f803ab866f3605b1c248",
+        "scripts/tk_recorder.py": "sha256:55f744752d17eee1712231b5b930a13874697ed8877bd71065cc92250ce56ada",
+        "scripts/transcribe.py": "sha256:0c4494860b5183499f9f2781035d56ed1c626dab44e33f158060994117c3f779"
+      }
     }
   }
 }
