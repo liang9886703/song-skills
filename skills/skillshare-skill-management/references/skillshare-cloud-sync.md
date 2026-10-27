@@ -1,62 +1,42 @@
-# Skillshare cloud sync layer (git remote, pull, --track)
+# 来源更新与仓库同步
 
-Skillshare's local source→target sync is only half the tool. The cloud layer makes a Git
-repo the source of truth and the local `~/.config/skillshare/` a cache. This file covers
-the cloud model and how to diagnose when it is unwired.
+## 三种不同的操作
 
-## The intended three-layer model
+| 操作 | 取得或写入的内容 | 完成标准 |
+|------|----------------|----------|
+| 更新各技能上游 | 从 README 登记的原作者仓库取得对应技能，合并到 song-skills | 逐项比较并采用更新，保留本地适配，记录实际上游版本 |
+| 同步个人仓库 | 在 song-skills 的实际 Git 根目录拉取或提交、推送 | Git 命令成功，确认提交范围和远端结果 |
+| 同步工具目标 | 从 `sources.skills` 分发到配置中的各工具目录 | `skillshare sync -g` 成功，并验证目标内容或链接 |
 
-```
-Git repo (GitHub/GitLab/any git host)   ← cloud source of truth
-        │  skillshare pull / push
-        ▼
-~/.config/skillshare/skills/            ← local cache (a git repo with a remote)
-        │  skillshare sync (symlink or copy)
-        ▼
-targets: ~/.hermes/skills, claude, cursor, codex, ... (60+)
-```
+用户笼统说“更新 skills”时，应完成上游更新，再同步个人仓库和工具目标。用户限定为某种操作时遵从其范围。
 
-Key commands (verified against v0.20.x):
+## 找到真实来源
 
-- `skillshare pull` — pull from git remote AND sync to targets in one step.
-- `skillshare push -m "msg"` — commit and push the source directory to the remote.
-- `skillshare commit -m "msg"` — local checkpoint without pushing.
-- `skillshare install github.com/owner/repo --track` — install tracked; tracked skills
-  are updated in bulk by `skillshare update --all`.
-- `skillshare update --all` — pull updates for every tracked/remote-installed skill.
-  Skills shown as `local` in `skillshare list` are NOT touched by this.
+先查主仓库 README 的“技能出处”表，再检查技能内的署名、安装元数据和来源记录。一个链接必须能对应到该技能的实际文件或明确的改编声明，而不仅是同名项目或依赖。
 
-## Diagnosing "cloud capability not wired"
+- 优先记录具体技能子目录；根目录本身就是单个技能时可记录仓库首页。
+- 保留原作者和许可。翻译、移植、改编、本地封装分别注明，更新时保留这些适配。
+- 非 GitHub 来源保留实际地址；没有可靠来源的技能跳过上游替换并报告，不推测网址。
+- 上游迁移或重命名时，核对后补充当前规范地址并保留原始来源线索。
+- 上游不存在、归档或无法访问时，说明实际状态；不要改用名字相似的其他项目覆盖本地版本。
 
-A user can have skillshare fully working as a local symlink distributor while the entire
-cloud chain is inert. Check three things:
+## 获取与合并上游
 
-1. `cd ~/.config/skillshare && git remote -v` — if "not a git repository" or no remote,
-   `pull`/`push` have nothing to talk to. The source dir must be a git repo with a
-   remote (typically a private GitHub repo).
-2. `skillshare list` — skills marked `local` were never installed from a remote;
-   `update --all` is a no-op for them. Reinstall from their upstream GitHub source
-   with `--track` to make them updatable.
-3. No scheduler — skillshare has no built-in daemon. "Auto pull" must come from a cron
-   job running `skillshare pull && skillshare update --all`.
+读取当前 `skillshare` 帮助和安装元数据。可追踪安装的技能可借助 `skillshare update <技能名>` 或 `skillshare update --all` 获取更新；执行前了解是否会覆盖本地文件，有定制时先隔离比较。`local` 标记只表示 CLI 未追踪该项，不能据此认定没有上游。
 
-## Wiring it up from scratch
+未追踪的技能可通过 GitHub 工具或临时检出上游，在主仓库之外获取原始文件，再比较对应的完整技能目录。同一上游仓库可以只获取一次，分别合并其多个技能。保留脚本、参考文件、资源与许可证的一致性，不自动执行新拉取的安装脚本。
 
-```bash
-cd ~/.config/skillshare
-git init && git add -A && git commit -m "init skills"
-git remote add origin git@github.com:<user>/<private-skills-repo>.git
-git push -u origin main
-# then on any machine: skillshare pull  (pulls + syncs to all targets)
-```
+有旧上游基线时做三方比较；无基线时根据差异逐项合并。自编技能和本地适配不能因上游更新丢失。对外部项目的个人封装，只更新实际引用或内置的上游部分，并核对封装兼容性。
 
-Creating the GitHub repo is a side effect on the user's account — confirm with the user
-(or use `gh repo create` only after explicit approval) before doing this autonomously.
+采用更新后，在技能已有的来源记录中写入核实过的提交或版本；README 保持技能名、来源链接、关系和更新注意事项可读。来源登记不代表已经拉取更新，不填造“最新提交”。
 
-## Notes
+## 同步 song-skills
 
-- There is no `skillshare remote` or `skillshare repo` subcommand; remote management is
-  plain git inside the source directory. The git-related subcommands are `commit`,
-  `push`, `pull` (listed under "GIT REMOTE" in `skillshare --help`).
-- `skillshare hub <subcommand>` is a separate feature (hub management) — do not confuse
-  it with the git remote flow.
+读取 `sources.skills` 后，用 `git -C <源目录> rev-parse --show-toplevel` 找 Git 根目录，再检查 remote 和工作区状态。源目录不一定就是 Git 根目录，更不一定是 `~/.config/skillshare/`。
+
+- `git pull` 或 `skillshare pull` 面向配置的个人仓库，不能替代各技能原作者仓库的更新。
+- 对本次变更按路径暂存、审阅、提交和推送；工作区有其他任务的修改时保留它们，不使用全量暂存将其混入。
+- 主仓库已有本地专用技能排除规则时保持生效，不发布凭据、缓存与机器配置。
+- 现有远端可直接用于用户要求的仓库同步；若不存在远端或无法访问，完成不受影响的本地工作并报告缺失项，不擅自创建或替换远端仓库。
+
+随后预览并执行 `skillshare sync -g`，读取摘要并验证目标。分别汇报上游更新、远端推送和本机分发结果；不存在自动定时更新的要求时，不增设定时任务。

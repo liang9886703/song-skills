@@ -1,66 +1,57 @@
 ---
 name: skillshare-skill-management
-description: Use when assembling or syncing agent skills with skillshare.
-version: 1.0.0
+description: 管理个人 song-skills 技能库：安装与组装技能、记录 GitHub 出处、按各技能上游更新后同步仓库和工具目录。用户说“更新一下 skills”“更新技能库”或要求维护个人技能时使用。
 license: MIT
 metadata:
+  version: 1.1.0
   hermes:
     tags: [skills, skillshare, installation, synchronization, skill-management]
 ---
 
-# Skillshare skill management
+# 个人技能库管理
 
-Use this skill when a user wants to install an agent skill through `skillshare`, assemble a skill from multiple pasted files, or synchronize shared skills into Hermes and other agent targets.
+维护个人主仓库 `song-skills`，使用 `skillshare` 将技能分发到当前机器配置的 AI 工具。安装、来源登记、上游更新和本机同步都以主仓库为准。
 
-## Core model
+## 中文约定与目录
 
-- Read `sources.skills` in the active skillshare configuration to locate the source-of-truth directory. In this setup it points to this repository's `skills/` directory; `~/.config/skillshare/skills/` may be an older checkout. Commit and push the Git repository containing the configured source.
-- Each skill is a directory named after the skill and normally contains `SKILL.md`.
-- Supporting material belongs inside the skill directory, commonly under `reference/` or `references/` as required by the skill's own layout.
-- `skillshare sync` copies or links source skills into configured targets; it does not install a skill when no target is configured.
-- Hermes' skillshare target may be `~/.hermes/skills/`, while a profile-specific Hermes runtime can have a separate profile path. Confirm the configured target before claiming installation.
+- 用户自己编写的技能使用中文，包括 `description`、正文及配套说明；本技能也遵守此约定。目录名、`name`、命令和代码标识保留必要的英文。第三方技能保留原文和署名，保留已有中文适配。
+- 读取当前生效的 skillshare 配置，通过 `sources.skills` 找到真实源目录；本机配置为 `/Users/zisongliang/code/song-skills/skills`，其他机器以各自配置为准。
+- 每个技能放在 `skills/<技能名>/SKILL.md`，支持文件按原结构放在该目录内。不要把旧的 `~/.config/skillshare/skills/` 或工具目标目录当成主仓库。
+- 读取主仓库 README、Git remote 和工作区差异；保留其他任务的修改。遵守本地技能的发布范围，本仓库 `baidu*` 技能仅留本地，不提交到 GitHub。
 
-## Workflow
+## 用户说“更新 skills”时
 
-1. Identify whether the user is providing a complete external skill or assembling one from multiple files.
-2. For a multipart skill, preserve each part's requested relative path and write it under one source directory. Treat a file named `skills.md` as `SKILL.md` when its content has standard skill frontmatter and the user is clearly providing the main skill file.
-3. Do not run synchronization until the user has finished sending the parts, unless they explicitly ask for incremental installation.
-4. Initialize skillshare if needed:
-   ```bash
-   skillshare init
-   ```
-   The command may interactively copy existing skills into the source directory. Review its output rather than assuming the source is empty.
-5. Add the intended target if `skillshare target list` shows no configured targets. For Hermes, use the actual target detected by `skillshare init`, usually:
-   ```bash
-   skillshare target add hermes ~/.hermes/skills
-   ```
-6. Synchronize:
-   ```bash
-   skillshare sync
-   ```
-7. Verify the result by checking the sync summary and reading the resulting `SKILL.md` plus important reference files from the target directory.
+默认含义是：**查找各技能的 GitHub 出处，获取并合并上游更新，再同步 song-skills 仓库与本机工具目录。** 用户只指定部分技能时，限定在该范围。
 
-## Installation method
+1. 先读取主仓库 README 的“技能出处”表，以及相关技能的 `SKILL.md`、README、安装元数据或来源记录。为每个待更新技能确认上游仓库和具体子目录；有疑问时联网核对。
+2. 对已有可靠出处的技能，获取上游最新版本，在临时目录比较完整技能目录，包括脚本、参考文件、资源和许可证。单个仓库内可能有多个技能，只更新对应部分。
+3. 合并上游改动，保留个人定制、中文适配、工具兼容修改和本地配置。能找到旧上游版本时做三方比较；缺少基线时先审阅差异，不整目录强制覆盖。某个技能冲突无法可靠处理时，保留该技能并报告，继续处理其他技能。
+4. 更新主仓库中的技能文件及出处说明。记录实际采用的上游分支或提交、子目录和保留的本地适配；只有核实并采用过的版本才能写成“已更新”。
+5. 检查差异、入口与引用、支持脚本等受影响内容。仅提交本次修改，并推送到主仓库配置的远端；不得把其他任务的未提交修改或本地专用文件一起发布。
+6. 先运行 `skillshare sync -g --dry-run` 检查，再运行 `skillshare sync -g` 分发到当前配置的目标；读取同步结果并验证关键目标文件。
+7. 汇报已更新、已是最新、无可靠出处、无法访问或存在冲突的技能，以及 Git 提交/推送和目标同步的实际结果。
 
-`skillshare` is a Go single-binary CLI, not the npm package named `skillshare`. Do not invent an npm installation command. Prefer the project's official installer, Homebrew, or a release binary. If the official installer needs `sudo` but the terminal cannot accept a password, install the matching release binary into `~/.local/bin` and verify `skillshare version`; report the user-level path clearly.
+在 song-skills 中执行 `git pull` 只取得个人仓库中的版本；`skillshare sync` 只分发本地文件；二者都不能单独算作完成“更新 skills”。`skillshare update --all` 只覆盖可追踪的远程安装项；即使技能被标为 `local`，只要有可靠的上游来源，仍需逐项比较更新。
 
-## Safety and reporting
+若用户只说“同步到 Codex/Claude”等目标目录，执行分发即可。若用户只要求修改本技能的规则，修改规则和必要的出处说明，不据此启动全库上游更新。
 
-- Inspect a remote install script before executing it, especially when it pipes downloaded content to a shell.
-- Never claim a sync happened when the output says `0 targets` or when `skillshare sync` failed.
-- Distinguish the skillshare source directory, target directory, and Hermes profile-specific directories in the final report.
-- Report the actual version, target, and sync counts returned by the command.
+## 在 GitHub 介绍中登记出处
 
-## Cloud sync layer
+在 `song-skills` 根目录 `README.md` 的“技能出处”表中维护：**技能名、来源链接、来源关系与更新注意事项**。GitHub 链接优先指向具体技能子目录；非 GitHub 来源保留真实链接。
 
-The source directory can be backed by a git remote, making a Git repo the cloud source
-of truth and the local directory a cache (`skillshare pull` pulls + syncs in one step;
-`--track` installs enable `update --all`). A working local sync setup can still have the
-cloud layer entirely unwired — no git remote on the source dir, all skills listed as
-`local`, no scheduler for auto-pull. See `references/skillshare-cloud-sync.md` for the
-model, the wiring recipe, and the three-point diagnosis.
+- 有证据才写出处：可依据原作者声明、安装元数据、项目说明或已核验的上游文件。依赖库、示例仓库、讨论中提到的项目不能直接充当技能来源。
+- 区分直接引入、翻译/移植/改编，以及只封装外部项目的个人技能。多个来源分别署名；改编技能需要合并更新，不能用原版直接替换。
+- 未确定来源时标为“待确认”或暂不纳入表中；不能因为缺少链接就认定是个人原创。已经确认由用户编写的技能可标为“个人编写”。
+- 安装新技能或确认旧技能出处时，同时维护表格；已有来源字段与表格保持一致。仓库迁移时保留原始出处并补充新地址。
 
-## References
+## 安装与组装
 
-- See `references/skillshare-workflow.md` for the concrete multipart assembly and Hermes synchronization recipe learned from a real session.
-- See `references/skillshare-cloud-sync.md` for the cloud source-of-truth setup (git remote, pull/push, --track) and diagnosing an unwired cloud layer.
+完整外部技能先确认来源；分多条消息提供的技能按用户指定相对路径组装，等用户发完后再同步，除非明确要求增量安装。主入口内容符合规范且用户意图明确时，可将 `skills.md` 规范为 `SKILL.md`。
+
+安装与目标配置见 [组装和同步流程](references/skillshare-workflow.md)。涉及上游更新、个人远端仓库与本机分发的区别时，见 [来源更新与仓库同步](references/skillshare-cloud-sync.md)。
+
+## 结果核验
+
+- `skillshare` 是 Go 单文件 CLI，不是 npm 上的同名包；安装命令以项目说明和当前 CLI 帮助为准。
+- 当前配置决定同步目标；不能假定一定有 Hermes，也不能把 `0 targets` 或失败输出称为安装成功。
+- 区分“上游已更新”“个人仓库已推送”“目标目录已同步”，只报告实际完成的步骤；按需报告版本、提交、目标和同步数量。

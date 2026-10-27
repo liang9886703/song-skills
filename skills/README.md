@@ -26,7 +26,7 @@
 | `project-context-discovery` | Use when local project source files have an unclear path. |
 | `prompt-log` | Extract conversation transcripts from AI coding session logs (Clawdbot, Claude Code, Codex). Use whe… |
 | `self-improving-agent` | A universal self-improving agent that learns from ALL skill experiences. Uses multi-memory architect… |
-| `skillshare-skill-management` | Use when assembling or syncing agent skills with skillshare. |
+| `skillshare-skill-management` | 管理个人 song-skills：登记出处、按各技能 GitHub 上游更新，再同步仓库和工具目录。 |
 | `subagent-driven-development` | Execute plans via delegate_task subagents (2-stage review). |
 | `taste-project` | 阅读代码仓库并按约束产出分析报告。用户想初步了解一个项目仓库、或想深入了解仓库里的某一个子能力时使用；用户只丢来一个仓库链接或目录、没说具体要什么时也用本 skill。 |
 | `xurl` | A curl-like CLI tool for making authenticated requests to the X (Twitter) API. Use this skill when y… |

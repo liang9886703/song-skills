@@ -32,6 +32,8 @@ metadata:
 
 # Skillshare CLI
 
+个人 song-skills 管理约定：用户说“更新 skills”时，使用 `skillshare-skill-management` 的流程，先按各技能在主仓库 README 登记的出处获取并合并上游更新，再同步个人仓库与本机目标。仅运行 `pull`、`sync` 或只覆盖 tracked 项的 `update --all`，不代表已完成全库上游更新。
+
 Global: `~/.config/skillshare/skills/` → all AI CLIs. Project: `.skillshare/skills/` → repo-local.
 
 For an existing setup, read `sources.skills` in the active configuration before choosing a repository to commit or push. The configured source may differ from the default directory; use the Git root and remote containing that source.
