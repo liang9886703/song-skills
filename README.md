@@ -2,21 +2,11 @@
 
 个人技能主仓库：<https://github.com/liang9886703/song-skills>。
 
-所有技能统一放在 `skills/<技能名>/`。编辑、提交和推送均以本仓库为准；旧的 `liang9886703/skills` 仓库仅保留为迁移备份，不再作为本机 skillshare 的源目录。
+所有技能统一放在 `skills/<技能名>/`，每个技能以 `SKILL.md` 为入口，脚本、参考资料和资源保存在对应技能目录中。
 
 ## 本机 skillshare 配置
 
 在当前机器的 `~/.config/skillshare/config.yaml` 中，将 `sources.skills` 设为本仓库 `skills/` 的绝对路径，保留当前机器已有的 agents、targets 和其他设置，然后执行 `skillshare sync -g --dry-run` 核对，再执行 `skillshare sync -g`。
-
-根目录的 `config.yaml` 是历史机器配置，包含另一台机器的路径和目标，仅供参考，不应直接覆盖当前机器的配置。
-
-## 本地技能与提交范围
-
-- 所有以 `baidu` 开头的技能目录仅保留在本地，已由 `.gitignore` 的 `/skills/baidu*/` 排除，不提交到 GitHub。
-- 百度工作技能统一使用 `baidu-` 前缀，包括 BLS、BOS、企业搜索、如流消息、知识库管理与导出、ugate 认证。
-- 本地配置、认证信息和缓存随本地技能保留，不发布；其他机器需要自行配置这些技能。
-- 中文去 AI 写作痕迹技能使用 `humanizer-zh`；已移除的英文 `humanizer` 保持移除。
-- 同名技能以本仓库原有版本为准；迁入技能保留其支持脚本和资源，统一目录与入口名称。
 
 ## 个人技能管理约定
 
@@ -26,7 +16,7 @@
 
 ## 技能出处
 
-以下记录来自技能内的署名、来源元数据及说明文件；GitHub 仓库和所列技能子目录已于 2026-10-27 核对。只列有明确依据的来源；未列出的技能不因此视为个人原创，来源待确认。后续安装或更新时继续维护此表，已采用的上游提交或版本记录在各技能的来源文件中。
+以下列出有明确依据的技能出处；未列出的技能来源待确认。安装或更新技能时同步维护来源链接、改编关系和更新注意事项，采用的上游版本记录在对应技能的来源文件中。
 
 | 技能 | 来源 | 关系与更新注意事项 |
 |------|------|------------------|
@@ -50,9 +40,3 @@
 | `requesting-code-review` | [obra/superpowers](https://github.com/obra/superpowers/tree/main/skills/requesting-code-review) | 入口声明结合 obra/superpowers 与 MorAlekss；后者的具体仓库待确认，不覆盖本地组合流程。 |
 | `plan` | [obra/superpowers](https://github.com/obra/superpowers) | 入口声明写作方法改编自该项目；本地“只写计划、不执行”的流程需保留。 |
 | `spike`、`sketch` | [gsd-build/get-shit-done](https://github.com/gsd-build/get-shit-done) | 本地说明声明改编自 GSD 对应工作流；仓库已归档，保留本地独立适配，不假定存在持续更新。 |
-
-## 提交与同步
-
-在本仓库检查 `git status` 和待提交差异后，使用 Git 提交并推送。skillshare 的同步源是当前配置的 `sources.skills`；不要仅凭默认目录推断应该提交哪个 Git 仓库。
-
-首次迁移完成后，核对各目标工具的技能链接是否指向本仓库。旧源目录暂时保留，以便核对迁移内容。
