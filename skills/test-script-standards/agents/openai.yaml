@@ -1,0 +1,4 @@
+interface:
+  display_name: "Shell Script Standards"
+  short_description: "编写、重构并评审可重复、可诊断且安全的 Shell 脚本"
+  default_prompt: "Use $test-script-standards to write or review this Shell script using my required structure, logging, cleanup, and validation rules."

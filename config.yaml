@@ -1,3 +1,5 @@
+# Historical machine configuration; do not copy over another machine's active config.
+# See README.md for the canonical repository and local source setup.
 # yaml-language-server: $schema=https://raw.githubusercontent.com/runkids/skillshare/main/schemas/config.schema.json
 sources:
   skills: /Users/songkuakua/.config/skillshare/skills

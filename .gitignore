@@ -1,0 +1,11 @@
+# Local machine files
+.DS_Store
+__pycache__/
+*.py[cod]
+.metadata.json
+
+# Baidu skills are local-only and must never be published.
+/skills/baidu*/
+
+# Downloaded installer archive
+/skills/skill-recommender/zip.zip

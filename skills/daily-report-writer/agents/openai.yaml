@@ -1,0 +1,4 @@
+interface:
+  display_name: "Reports / Daily report writer"
+  short_description: "Compile Chinese daily reports from daily files and coding sessions."
+  default_prompt: "帮我根据今天和最近几天的日报、编码会话记录，去重整合今天的日报。"

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Codebase to Tutorial"
+  short_description: "把代码库整理成中文阅读教程，包含概念解释、关键流程和源码阅读位置"
+  default_prompt: "使用 $codebase-to-tutorial 为这个项目生成面向人的中文代码阅读教程。"

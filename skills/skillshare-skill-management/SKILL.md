@@ -14,7 +14,7 @@ Use this skill when a user wants to install an agent skill through `skillshare`,
 
 ## Core model
 
-- `~/.config/skillshare/skills/` is the skillshare source-of-truth directory.
+- Read `sources.skills` in the active skillshare configuration to locate the source-of-truth directory. In this setup it points to this repository's `skills/` directory; `~/.config/skillshare/skills/` may be an older checkout. Commit and push the Git repository containing the configured source.
 - Each skill is a directory named after the skill and normally contains `SKILL.md`.
 - Supporting material belongs inside the skill directory, commonly under `reference/` or `references/` as required by the skill's own layout.
 - `skillshare sync` copies or links source skills into configured targets; it does not install a skill when no target is configured.
