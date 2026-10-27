@@ -62,6 +62,10 @@ For a Vue 3 + TypeScript + Convex application, keep local discovery/import separ
 - Do not search only the workspace when the user refers to a user-level document collection.
 - Do not report “not found” without naming the roots and search methods actually tried.
 - Do not design the document schema from an unverified corpus.
+- If a `clarify` question is pending, do not continue exhaustive searching after it times out; report what was found and what remains ambiguous.
+- Use one broad search query with `|| true` fallbacks rather than many narrow queries with incremental exclusions; repeating a failed query with slightly different flags is a loop, not progress.
+- When the user's request contains an undefined referent (e.g. "bot's art style", "the 4 sisters"), resolve the referent before searching; if it cannot be resolved from context, ask once and stop.
+- If a search returns empty or the same result twice, change the query root or the search mechanism (Spotlight → bounded scan → ask user), not the filter flags.
 
 ## References
 
