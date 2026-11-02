@@ -1,129 +1,64 @@
 ---
 name: my-repo-story
-description: 多代码仓库自动化安全拉取、24小时变更分析与技术演进故事复盘技能。支持多仓库状态检查、本地冲突保护（遇到未提交改动自动跳过并告警）、提取过去24小时（或自定义周期）提交并按特征聚类，生成技术叙事长文与日常演进报告，并支持 macOS launchd/cron 自动化定时任务配置。
+description: 多代码仓库自动化安全拉取、24小时变更分析与技术演进故事复盘技能。提供核心约束、位置规范与叙事要求，由高级模型自主完成多仓库状态排查、冲突防护、提交考古与演进复盘。
 ---
 
 # my-repo-story (多仓库自动化同步与演进故事复盘)
 
-当需要管理多个联动代码仓库、安全同步最新代码，并以技术叙事（Storytelling）的视角梳理过去一天（或指定周期）的架构演进与工程改动时，使用本技能。
+当需要对一组联动的代码仓库执行日常同步、提取周期变更，并产出高质量的技术演进叙事报告时使用本技能。高级模型可自主规划执行细节，但须严格遵守以下目标与边界约束。
 
 ---
 
-## 核心能力与适用场景
+## 一、要做什么 (Objectives)
 
-1. **多仓库安全拉取与状态守护**：
-   - 自动化批量执行 `fetch` 与 `pull`。
-   - **本地冲突防护**：更新前严格检查本地工作区状态，若检测到未提交修改可能导致覆盖或冲突，**坚决跳过拉取**，保留本地工作现场，并在最终报告中以高亮 `[!WARNING]` 标明。
+1. **多仓库健康扫描与安全同步**：
+   - 遍历指定的所有目标代码仓库，获取分支状态并尝试与远端同步。
 2. **周期性提交挖掘与特征聚类**：
-   - 提取过去 24 小时（或自定义时间窗口）内各仓库的提交（包含 Hash、作者、相对时间、提交信息与 Diff 统计）。
-   - 按 `feat`、`fix`、`refactor`、`perf`、`docs` 等工程维度进行提交分类。
-3. **技术演进复盘（Storytelling 视角）**：
-   - 借鉴 `/repo-story-time` 的考古叙事风格，不机械堆砌 Git log，而是提炼提交背后的技术动因、业务战役、关键架构改进与多组件联动影响。
-4. **macOS 定时调度与合盖休眠支持**：
-   - 提供开箱即用的 macOS `launchd` 配置模版，支持每天早晨 09:00:00 自动触发。
-   - **深度休眠自动补跑**：若设定的时间点电脑合盖睡眠，系统在下次开盖唤醒的一瞬间自动补跑，确保每日分析不缺卡。
+   - 提取过去 24 小时（或指定周期）内的全部分支与子模块提交，按工程维度（Feature / Bugfix / Refactor / Perf / Docs）分类。
+3. **技术演进复盘 (Storytelling)**：
+   - 结合系统架构全景，提炼代码变更背后的工程意图、技术战役、跨模块协同与潜在影响面，撰写结构化的演进报告。
+4. **自动化定时守护 (可选)**：
+   - 支持配置系统级定时任务（如 macOS `launchd`），实现每日定时触发与合盖休眠唤醒补跑。
 
 ---
 
-## 工作流程
+## 二、核心约束 (Constraints & Guardrails)
 
-```mermaid
-flowchart TD
-    A[启动同步任务] --> B[读取仓库配置 config.json]
-    B --> C[遍历目标代码仓库]
-    C --> D[执行 git fetch origin]
-    D --> E{检查本地是否有未提交改动?}
-    E -->|无未提交改动| F[执行 git pull 安全拉取]
-    E -->|存在未提交改动| G{是否能无冲突 Fast-forward?}
-    G -->|可以| H[执行 git pull --ff-only]
-    G -->|无法安全拉取| I[跳过更新并记录安全警示]
-    F --> J[提取周期提交日志]
-    H --> J
-    I --> J
-    J --> K[聚合多仓库改动 & 技术演进分析]
-    K --> L[生成带日期的 Markdown 报告]
-    L --> M[更新 latest.md & 记录日志]
-```
+1. **本地代码安全第一（不可覆写冲突）**：
+   - 更新前必须检查本地工作区状态（`git status`）。
+   - **如果本地存在未提交改动且更新可能引发冲突，必须跳过该仓库的拉取更新**，严禁强制覆盖或擅自修改工作现场；在最终报告中必须以高亮警示（`[!WARNING]`）显式提示用户。
+2. **技术叙事而非机械流水账 (Storytelling 准则)**：
+   - 严禁单纯罗列 Git commit hash 和标题；
+   - 必须结合组件职责进行深度复盘：解释为什么改（背景）、改了什么（核心逻辑）、带来了什么影响（协同效应与风险）；
+   - 对重要重构或关键修复需展示 Diff 规模与重点文件。
+3. **休眠与合盖容错**：
+   - 定时调度必须考虑笔记本合盖休眠的现实情况。在 macOS 环境下优先采用 `launchd` 的 `StartCalendarInterval`，确保休眠期间错过的任务在开盖唤醒时能立即自动补跑。
+4. **脱敏与信息安全**：
+   - 报告与对外同步的配置、脚本中不得泄露内部专有凭据、私有 Token、密钥或涉密地址。
 
 ---
 
-## 目录结构推荐
+## 三、文件与资源位置规范 (Locations & Conventions)
 
-在管理多个业务或技术组件时，推荐将调度配置与产物统一收敛：
+在目标工作区下，建议将调度、配置与产物统一收敛至以下结构：
 
-```text
-Scheduler/repo-story/
-├── config.json                     # 仓库路径、主干分支与组件描述
-├── prompt.md                       # 故事分析提示词与分析标准
-├── sync_and_story.py               # 执行脚本 (核心引擎)
-├── run.sh                          # launchd 调度入口 (已设置 PATH 与日志重定向)
-├── com.example.repo-story.plist    # macOS launchd 定时服务配置
-├── reports/                        # 历史报告归档 (YYYY-MM-DD.md 与 latest.md)
-└── logs/                           # 任务运行与错误日志
-```
-
----
-
-## 配置文件规范 (`config.json`)
-
-配置采用通用、脱敏的 JSON 结构，支持任意语言和技术栈的 Git 仓库：
-
-```json
-{
-  "scheduler_name": "Multi-Repo Daily Story",
-  "schedule": "Every day at 09:00:00 CST",
-  "paths": {
-    "reports_dir": "./reports",
-    "logs_dir": "./logs"
-  },
-  "repositories": [
-    {
-      "key": "gateway-service",
-      "name": "API Gateway & Routing Service",
-      "path": "/path/to/gateway",
-      "default_branch": "main",
-      "sub_components": ["proxy", "auth", "ratelimit"]
-    },
-    {
-      "key": "agent-runtime",
-      "name": "Core Agent Execution Runtime",
-      "path": "/path/to/runtime",
-      "default_branch": "develop",
-      "sub_components": ["engine", "sandbox", "memory"]
-    }
-  ]
-}
-```
+| 资产 / 资源 | 推荐位置 | 作用与规范 |
+| :--- | :--- | :--- |
+| **调度根目录** | `<workspace>/Scheduler/repo-story/` | 集中存放该调度任务的所有脚本、配置与输出 |
+| **仓库清单配置** | `<base_dir>/config.json` | 声明被监控的仓库名称、本地绝对路径、默认分支及核心子模块 |
+| **执行入口** | `<base_dir>/run.sh` | 赋权可执行的启动脚本，包含 PATH 环境补齐与执行日志重定向 |
+| **分析引擎** | `<base_dir>/sync_and_story.py` | 负责 Git 交互、冲突检查、提交提取与 Markdown 渲染的脚本 |
+| **历史报告归档** | `<base_dir>/reports/YYYY-MM-DD.md` | 按日期持久化存储的每日技术演进报告 |
+| **最新报告软链** | `<base_dir>/reports/latest.md` | 指向或同步最新产出的报告，便于下游快速读取 |
+| **运行日志** | `<base_dir>/logs/run.log` | 记录每次调度的触发时间戳、标准输出与退出码 |
+| **系统定时配置** | `~/Library/LaunchAgents/<label>.plist` | macOS 用户级 launchd 配置文件（09:00 触发 + 唤醒补跑） |
 
 ---
 
-## 脚本工具与使用
+## 四、技术报告输出标准
 
-技能自带脱敏脚本位于 `scripts/sync_and_story.py`：
-
-```bash
-# 使用指定配置文件运行
-python3 scripts/sync_and_story.py --config ./config.json
-
-# 指定时间范围（如查看过去 48 小时）
-python3 scripts/sync_and_story.py --config ./config.json --since "48 hours ago"
-
-# 仅检查状态不执行实际拉取 (Dry Run)
-python3 scripts/sync_and_story.py --config ./config.json --dry-run
-```
-
----
-
-## 定时任务与合盖休眠配置
-
-若需在 macOS 上配置每天 09:00 自动执行：
-1. 将 `examples/launchd.plist` 中的路径修改为本地真实路径；
-2. 复制到用户 LaunchAgents 目录：
-   ```bash
-   cp examples/launchd.plist ~/Library/LaunchAgents/com.user.repo-story.plist
-   ```
-3. 注册并加载：
-   ```bash
-   launchctl load -w ~/Library/LaunchAgents/com.user.repo-story.plist
-   ```
-4. **合盖休眠说明**：macOS 原生 `launchd` 的 `StartCalendarInterval` 机制会在休眠期间挂起任务，并在电脑唤醒后的第一时间自动触发补跑。
+最终 Markdown 报告须保证排版专业，层次分明：
+1. **状态总览表**：呈现各仓库的当前分支、更新结果（`UP_TO_DATE` / `SUCCESS` / `SKIPPED_DIRTY` / `FAILED`）、本地脏文件数与简要说明；
+2. **安全风险告警**：对有未提交改动的仓库给出明确的文件提示与保护说明；
+3. **深度技术故事**：按仓库或按业务战线展开，重点突出多组件之间的协同演进与核心改动分析；
+4. **运维与维护指令**：提供手动重跑、查日志与改配置的快捷指引。
