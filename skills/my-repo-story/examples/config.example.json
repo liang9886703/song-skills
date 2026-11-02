@@ -1,0 +1,31 @@
+{
+  "scheduler_name": "Multi-Repo Daily Story & Sync",
+  "schedule": "Every day at 09:00:00 CST",
+  "paths": {
+    "reports_dir": "./reports",
+    "logs_dir": "./logs"
+  },
+  "repositories": [
+    {
+      "key": "api-gateway",
+      "name": "API Gateway Service",
+      "path": "~/code/projects/api-gateway",
+      "default_branch": "main",
+      "sub_components": ["proxy", "auth", "rate-limiting"]
+    },
+    {
+      "key": "core-engine",
+      "name": "Core Business Engine",
+      "path": "~/code/projects/core-engine",
+      "default_branch": "master",
+      "sub_components": ["pipeline", "scheduler", "worker"]
+    },
+    {
+      "key": "frontend-web",
+      "name": "Frontend Web Application",
+      "path": "~/code/projects/frontend-web",
+      "default_branch": "main",
+      "sub_components": ["dashboard", "components", "api-client"]
+    }
+  ]
+}
