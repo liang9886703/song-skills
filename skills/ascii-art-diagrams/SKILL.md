@@ -1,6 +1,6 @@
 ---
 name: ascii-art-diagrams
-description: MUST be loaded before creating any ASCII art or text-based diagrams in markdown files. Provides mandatory workflow for properly aligned diagrams. You MUST follow the PLAN, DRAW, VERIFY phases in order. Do NOT skip any phase. Do NOT take shortcuts. Follow the workflow precisely. Diagrams that do not follow this workflow will be rejected. Before proceedig with work, confirm that you understand the entire workflow and will follow it for every diagram you create. You are not to proceed unless you are going to follow the process exactly. You MUST confirm that each step is followed before and after every diagram you create.
+description: "Create aligned ASCII art and text diagrams in Markdown. Load before drawing; follow the PLAN, DRAW, VERIFY workflow."
 license: MIT
 metadata:
   compatibility: opencode
