@@ -6,6 +6,9 @@ __pycache__/
 
 # Baidu skills are local-only and must never be published.
 /skills/baidu*/
+/skills/*/baidu*/
+**/baidu*/
 
 # Downloaded installer archive
 /skills/skill-recommender/zip.zip
+/skills/*/skill-recommender/zip.zip

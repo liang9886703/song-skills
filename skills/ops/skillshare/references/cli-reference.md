@@ -1,38 +1,5 @@
----
-name: skillshare
-description: 'Manages and syncs AI CLI skills and agents across 50+ tools from a single source.
-
-  Use this skill whenever the user mentions "skillshare", runs skillshare commands,
-
-  manages skills or agents (install, update, uninstall, sync, commit, audit, analyze, check, diff, search),
-
-  or troubleshoots skill/agent configuration (orphaned symlinks, broken targets, sync
-
-  issues). Covers both global (~/.config/skillshare/) and project (.skillshare/)
-
-  modes. Also use when: adding new AI tool targets (Claude, Cursor, Windsurf, etc.),
-
-  setting target include/exclude filters or copy vs symlink mode, using backup/restore
-
-  or trash recovery, piping skillshare output to scripts (--json), setting up CI/CD
-
-  audit pipelines, building/sharing skill hubs (hub index, hub add), or working with
-
-  agents (single .md files synced to agent-capable targets like Claude, Cursor,
-
-  Augment, OpenCode) via positional `agents` filter or `--kind agent`, plus
-
-  `.agentignore` and `enable`/`disable` for per-agent toggles.
-
-  '
-metadata:
-  version: v0.20.20
-  argument-hint: '[command] [target] [--json] [--dry-run] [-p|-g]'
----
-
 # Skillshare CLI
 
-个人 song-skills 管理约定：用户说“更新 skills”时，使用 `skillshare-skill-management` 的流程，先按各技能在主仓库 README 登记的出处获取并合并上游更新，再同步个人仓库与本机目标。仅运行 `pull`、`sync` 或只覆盖 tracked 项的 `update --all`，不代表已完成全库上游更新。
 
 Global: `~/.config/skillshare/skills/` → all AI CLIs. Project: `.skillshare/skills/` → repo-local.
 
@@ -85,7 +52,7 @@ skillshare sync --all                                # Sync skills + extras toge
 ```
 Project extras always read from `<sources.extras>/<name>` (default `.skillshare/extras/<name>`); per-extra `source` and `extras source` are global-only. For project agents, prefer target `agents:` unless you need extras-only flatten/extension.
 
-A target can set an `extension:` field in config.yaml to transform each source file during sync (e.g. markdown → TOML for Gemini/Codex); implies `copy` mode. See [extras.md](references/extras.md) for details.
+A target can set an `extension:` field in config.yaml to transform each source file during sync (e.g. markdown → TOML for Gemini/Codex); implies `copy` mode. See [extras.md](extras.md) for details.
 ### Extensions (Content Transformation)
 ```bash
 # Extension is a directory at .skillshare/extensions/<name>/
@@ -170,7 +137,7 @@ skillshare target codex --mode copy && skillshare sync --force  # copy mode
 #   Repo-level: <source>/_repo/.skillignore (scoped to that repo)
 #   .skillignore.local — local override (not committed), negation overrides base
 ```
-See [targets.md](references/targets.md) for details.
+See [targets.md](targets.md) for details.
 ### Updates & Maintenance
 ```bash
 skillshare check                              # See what has updates
@@ -202,7 +169,7 @@ skillshare doctor && skillshare status              # Diagnose issues
 skillshare install user/repo --force                 # Override audit block
 skillshare install user/repo --skip-audit            # Bypass scan entirely
 ```
-See [TROUBLESHOOTING.md](references/TROUBLESHOOTING.md) for more.
+See [TROUBLESHOOTING.md](TROUBLESHOOTING.md) for more.
 
 ## Quick Lookup
 | Commands | Project? | `--json`? |
@@ -228,14 +195,14 @@ See [TROUBLESHOOTING.md](references/TROUBLESHOOTING.md) for more.
 ## References
 | Topic | File |
 |-------|------|
-| Init flags | [init.md](references/init.md) |
-| Sync/collect/commit/push/pull | [sync.md](references/sync.md) |
-| Install/update/uninstall/new | [install.md](references/install.md) |
-| Status/diff/list/search/check | [status.md](references/status.md) |
-| Security audit | [audit.md](references/audit.md) |
-| Trash | [trash.md](references/trash.md) |
-| Operation log | [log.md](references/log.md) |
-| Targets | [targets.md](references/targets.md) |
-| Extras (rules/commands/prompts) | [extras.md](references/extras.md) |
-| Backup/restore | [backup.md](references/backup.md) |
-| Troubleshooting | [TROUBLESHOOTING.md](references/TROUBLESHOOTING.md) |
+| Init flags | [init.md](init.md) |
+| Sync/collect/commit/push/pull | [sync.md](sync.md) |
+| Install/update/uninstall/new | [install.md](install.md) |
+| Status/diff/list/search/check | [status.md](status.md) |
+| Security audit | [audit.md](audit.md) |
+| Trash | [trash.md](trash.md) |
+| Operation log | [log.md](log.md) |
+| Targets | [targets.md](targets.md) |
+| Extras (rules/commands/prompts) | [extras.md](extras.md) |
+| Backup/restore | [backup.md](backup.md) |
+| Troubleshooting | [TROUBLESHOOTING.md](TROUBLESHOOTING.md) |
