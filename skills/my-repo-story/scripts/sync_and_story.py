@@ -211,6 +211,7 @@ def main():
     parser.add_argument("--since", "-s", default="24 hours ago", help="Git log time window (default: '24 hours ago')")
     parser.add_argument("--output-dir", "-o", default=None, help="Custom output directory for reports")
     parser.add_argument("--dry-run", action="store_true", help="Inspect without pulling remote branches")
+    parser.add_argument("--notify", action="store_true", help="Send desktop and Agent UI conversation notifications")
     args = parser.parse_args()
 
     config_path = os.path.abspath(args.config)
@@ -247,6 +248,39 @@ def main():
         f.write(report_content)
 
     print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Report successfully generated: {dated_report}")
+    
+    if args.notify:
+        send_notifications(date_str, report_content, sum(1 for r in results if r["dirty_files"]))
+
+def send_notifications(today_str, report_content, dirty_count):
+    # Desktop banner notification
+    try:
+        title = "Multi-Repo Daily Story"
+        msg = f"{today_str} Sync completed!" + (f" ({dirty_count} repos with uncommitted changes)" if dirty_count > 0 else "")
+        subprocess.run(["osascript", "-e", f'display notification "{msg}" with title "{title}"'], capture_output=True)
+    except Exception:
+        pass
+
+    # Agent conversation notification
+    try:
+        agentapi_bin = os.path.expanduser("~/.gemini/antigravity/bin/agentapi")
+        if os.path.exists(agentapi_bin):
+            prompt = (
+                f"【Multi-Repo Daily Story Report ({today_str})】\n\n"
+                f"The scheduled sync and 24-hour changelog extraction has completed.\n"
+                f"Please present the overview table, conflict safety warnings, and narrative highlights:\n\n"
+                f"{report_content}"
+            )
+            cmd = [
+                agentapi_bin,
+                "new-conversation",
+                "--model=flash",
+                f"--title=Daily Repo Story ({today_str})",
+                prompt
+            ]
+            subprocess.run(cmd, capture_output=True, text=True)
+    except Exception:
+        pass
 
 if __name__ == "__main__":
     main()
