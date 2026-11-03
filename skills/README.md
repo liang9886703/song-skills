@@ -8,7 +8,7 @@
 
 ## 目录导航
 
-- [电脑运维 (ops)（28）](#ops)
+- [电脑运维 (ops)（27）](#ops)
 - [程序开发 (dev)（54）](#dev)
 - [生活管理相关 (lifestyle)（10）](#lifestyle)
 - [调研报告类 (research)（28）](#research)
@@ -45,8 +45,7 @@
 | [`node-inspect-debugger`](ops/node-inspect-debugger/SKILL.md) | Debug Node.js via --inspect + Chrome DevTools Protocol CLI. |
 | [`python-debugpy`](ops/python-debugpy/SKILL.md) | Debug Python: pdb REPL + debugpy remote (DAP). |
 | [`skill-quality-checker`](ops/skill-quality-checker/SKILL.md) | Skill 质量校验官（生产级）。对其他 Skill 进行结构化质量检查，覆盖6大维度21项核心指标。触发词/场景：校验Skill、检查Skill质量、质量检验、skill质检、review skill、技能审查、 |
-| [`skill-recommender`](ops/skill-recommender/SKILL.md) | 当用户提出可能需要专业能力的问题，且本地已安装的skills都不适合时，从远端skill托管平台推荐并安装新skills。获取可用skills列表，分析用户意图，展示Top 3相关选项，并在安装前预览详细信息。 |
-| [`skillshare`](ops/skillshare/SKILL.md) | 统一发现、推荐、安装和维护个人技能：搜索 skills.sh、GitHub、Hub、OneSkill 或已配置的内网目录，去重候选并安装到 song-skills 后分发。用户要找或推荐技能、安装或合并卸载技能、更 |
+| [`skillshare`](ops/skillshare/SKILL.md) | 统一发现、推荐、安装与维护个人技能：结合意图分析从远端/平台推荐 Top 3 技能并预览确认，支持搜索 skills.sh、GitHub、Hub、OneSkill 与内网源，安装到 song-skills 并分发。 |
 | [`skillshare-skill-management`](ops/skillshare-skill-management/SKILL.md) | 管理个人 song-skills：登记出处、按各技能 GitHub 上游更新，再同步仓库和工具目录。 |
 
 <a id="dev"></a>
