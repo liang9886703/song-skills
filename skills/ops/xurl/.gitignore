@@ -1,8 +1,0 @@
-xurl
-.xurl_test
-.DS_Store
-__pycache__/
-*.py[cod]
-
-# Added by goreleaser init:
-dist/

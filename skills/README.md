@@ -8,7 +8,7 @@
 
 ## 目录导航
 
-- [电脑运维 (ops)（31）](#ops)
+- [电脑运维 (ops)（28）](#ops)
 - [程序开发 (dev)（54）](#dev)
 - [生活管理相关 (lifestyle)（10）](#lifestyle)
 - [调研报告类 (research)（28）](#research)
@@ -48,9 +48,6 @@
 | [`skill-recommender`](ops/skill-recommender/SKILL.md) | 当用户提出可能需要专业能力的问题，且本地已安装的skills都不适合时，从远端skill托管平台推荐并安装新skills。获取可用skills列表，分析用户意图，展示Top 3相关选项，并在安装前预览详细信息。 |
 | [`skillshare`](ops/skillshare/SKILL.md) | 统一发现、推荐、安装和维护个人技能：搜索 skills.sh、GitHub、Hub、OneSkill 或已配置的内网目录，去重候选并安装到 song-skills 后分发。用户要找或推荐技能、安装或合并卸载技能、更 |
 | [`skillshare-skill-management`](ops/skillshare-skill-management/SKILL.md) | 管理个人 song-skills：登记出处、按各技能 GitHub 上游更新，再同步仓库和工具目录。 |
-| [`vpn-proxy-diagnostics`](ops/vpn-proxy-diagnostics/SKILL.md) | Use when a VPN/proxy cannot reach a domain. |
-| [`webhook-subscriptions`](ops/webhook-subscriptions/SKILL.md) | Webhook subscriptions: event-driven agent runs. |
-| [`xurl`](ops/xurl/SKILL.md) | A curl-like CLI tool for making authenticated requests to the X (Twitter) API. Use this skill when you need to post tweets, reply, quote, search, read posts, ma |
 
 <a id="dev"></a>
 ## 程序开发 (dev)
