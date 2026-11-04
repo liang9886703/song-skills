@@ -20,6 +20,10 @@
 
 用户说“更新一下 skills”或“更新技能库”时，按各技能的出处获取并合并上游更新，保留本地定制，再提交、推送到 song-skills，并同步到本机配置的工具目录。只拉取 song-skills 或只执行 `skillshare sync` 不代表完成上游更新。具体流程由 [`skillshare`](skills/ops/skillshare/SKILL.md) 维护。
 
+## 定时任务交接包
+
+`scheduler/` 放整包交接的定时任务（skill + 运行说明），不参与技能同步，入口见 [`scheduler/README.md`](scheduler/README.md)。
+
 ## 技能出处
 
 以下列出有明确依据的技能出处；未列出的技能来源待确认。安装或更新技能时同步维护来源链接、改编关系和更新注意事项，采用的上游版本记录在对应技能的来源文件中。

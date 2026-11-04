@@ -4,6 +4,10 @@
 
 规则在 [`SKILL.md`](SKILL.md)，定时定义在 [`routine.md`](routine.md)。本文只讲为什么这么设计、哪些地方会出问题、怎么接手，不重复规则本身。
 
+## 为什么放在 `scheduler/` 而不是 `skills/`
+
+`scheduler/` 是交接包，不是本机在用的技能：它不参与 skillshare 同步，也不该被分发到各个 agent 的技能目录。放进 `skills/<场景>/` 会被当成常规技能同步出去，所以单独放一层。真正要用的地方，把 `ai-morning-digest/` 拷过去再按技能加载。
+
 ## 为什么是一个 skill
 
 原先「单篇写法」和「仓库深入分析」是两个独立 skill，被晨报引用。合成一个 skill 的理由：
@@ -37,7 +41,7 @@
 
 ## 接手步骤
 
-1. 把本目录（`skills/research/ai-morning-digest/`）整个放进目标 agent 能加载的 skill 目录；确认 `SKILL.md` 的 name 是 `ai-morning-digest`，`reference/`、`templates/` 跟着一起过去。
+1. 把本目录（`scheduler/ai-morning-digest/`）整个放进目标 agent 能加载的 skill 目录；确认 `SKILL.md` 的 name 是 `ai-morning-digest`，`reference/`、`templates/` 跟着一起过去。
 2. 定 `<STORAGE>`，改 `SKILL.md` 的「存储」一节，建好 `daily/`。
 3. 按 `routine.md` 建定时任务，prompt 里的 `<STORAGE>` 换成上一步的路径。
 4. 先只跑第一段，检查 `candidates.json` 条数和来源分布是否正常；再跑第二、三段。
