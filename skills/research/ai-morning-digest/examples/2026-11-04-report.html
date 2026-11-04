@@ -1,0 +1,872 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>AI 信息晨报 · 2026-11-04</title>
+<style>
+  :root {
+    --bg: #f5f5f4;
+    --sidebar: #f0f0ee;
+    --page: #ffffff;
+    --ink: #2e3338;
+    --muted: #787878;
+    --faint: #a3a3a0;
+    --rule: #e3e3e0;
+    --hover: #e8e8e5;
+    --active: #ebe4ff;
+    --link: #705dcf;
+    --fail: #c0392b;
+    --code-bg: #f2f2f0;
+    --left-w: 270px;
+    --right-w: 220px;
+    --topbar-h: 48px;
+    --drawer-w: min(86vw, 300px);
+    --safe-t: env(safe-area-inset-top, 0px);
+    --safe-b: env(safe-area-inset-bottom, 0px);
+    --safe-l: env(safe-area-inset-left, 0px);
+    --safe-r: env(safe-area-inset-right, 0px);
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; height: 100%; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font: 16px/1.7 -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC",
+          "Hiragino Sans GB", "Noto Sans SC", "Microsoft YaHei", sans-serif;
+    -webkit-font-smoothing: antialiased;
+    height: 100%;
+  }
+  body.drawer-open { overflow: hidden; }
+
+  /* —— Top bar (tablet + phone) —— */
+  .topbar {
+    display: none;
+    position: sticky;
+    top: 0;
+    z-index: 70;
+    height: calc(var(--topbar-h) + var(--safe-t));
+    padding: var(--safe-t) var(--safe-r) 0 var(--safe-l);
+    background: var(--page);
+    border-bottom: 1px solid var(--rule);
+    align-items: center;
+    gap: 0.35rem;
+  }
+  .topbar .tb-btn {
+    flex: none;
+    min-width: 44px;
+    min-height: 44px;
+    margin: 0;
+    padding: 0 0.65rem;
+    border: 0;
+    border-radius: 6px;
+    background: transparent;
+    color: var(--ink);
+    font: inherit;
+    font-size: 0.875rem;
+    font-weight: 600;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .topbar .tb-btn:hover,
+  .topbar .tb-btn:focus-visible { background: var(--hover); outline: none; }
+  .topbar .tb-title {
+    flex: 1;
+    min-width: 0;
+    text-align: center;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--ink);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    padding: 0 0.25rem;
+  }
+  .topbar .tb-spacer { flex: none; min-width: 44px; min-height: 44px; }
+
+  /* —— Layout —— */
+  .app {
+    display: grid;
+    grid-template-columns: var(--left-w) minmax(0, 1fr) var(--right-w);
+    min-height: 100dvh;
+  }
+  .side {
+    position: sticky;
+    top: 0;
+    height: 100dvh;
+    overflow: auto;
+    background: var(--sidebar);
+    border-right: 1px solid var(--rule);
+    padding: 0.85rem 0.5rem 2rem;
+    font-size: 0.8125rem;
+    -webkit-overflow-scrolling: touch;
+  }
+  .side.right { border-right: 0; border-left: 1px solid var(--rule); }
+  .side .side-title {
+    margin: 0 0 0.55rem;
+    padding: 0 0.45rem;
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    color: var(--faint);
+    text-transform: uppercase;
+  }
+  .tree, .tree ul, .outline { list-style: none; margin: 0; padding: 0; }
+  .tree > li { margin: 0 0 0.35rem; }
+  .folder {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.28rem 0.4rem;
+    color: var(--muted);
+    font-weight: 600;
+    user-select: none;
+  }
+  .folder::before {
+    content: "";
+    width: 0; height: 0;
+    border-top: 4px solid transparent;
+    border-bottom: 4px solid transparent;
+    border-left: 5px solid var(--faint);
+  }
+  .tree ul {
+    margin: 0 0 0.25rem 0.55rem;
+    padding-left: 0.35rem;
+    border-left: 1px solid var(--rule);
+  }
+  .tree a.file {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.35rem;
+    padding: 0.4rem 0.45rem;
+    min-height: 44px;
+    color: var(--ink);
+    text-decoration: none;
+    border-radius: 4px;
+    line-height: 1.35;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .tree a.file::before {
+    content: "📄";
+    font-size: 0.75rem;
+    opacity: 0.55;
+    flex: none;
+    margin-top: 0.05rem;
+  }
+  .tree a.file:hover { background: var(--hover); }
+  .tree a.file.active { background: var(--active); color: #3f2f8f; }
+  .tree a.file.is-fail { color: var(--fail); }
+  .outline-panel { display: none; }
+  .outline-panel.active { display: block; }
+  .outline a {
+    display: block;
+    padding: 0.4rem 0.45rem;
+    min-height: 44px;
+    color: var(--muted);
+    text-decoration: none;
+    border-radius: 4px;
+    line-height: 1.35;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .outline a:hover { background: var(--hover); color: var(--ink); }
+  .outline a.h1 { color: var(--ink); font-weight: 650; }
+  .outline a.h2 { padding-left: 0.75rem; font-weight: 600; color: var(--ink); }
+  .outline a.h3 { padding-left: 1.2rem; }
+  .main-wrap {
+    overflow: auto;
+    height: 100dvh;
+    background: var(--page);
+    -webkit-overflow-scrolling: touch;
+  }
+  .doc { display: none; }
+  .doc.active { display: block; }
+  .page {
+    max-width: 46rem;
+    margin: 0 auto;
+    padding: 2rem 2.5rem 3.5rem;
+    min-height: 100%;
+  }
+  .md h1 {
+    margin: 0 0 0.4rem;
+    font-size: 1.75rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    line-height: 1.25;
+  }
+  .md .meta {
+    margin: 0 0 1.1rem;
+    font-size: 0.8125rem;
+    color: var(--muted);
+  }
+  .md h2 {
+    margin: 1.6rem 0 0.7rem;
+    font-size: 1.25rem;
+    font-weight: 650;
+    scroll-margin-top: 1rem;
+  }
+  .md h3 {
+    margin: 1.2rem 0 0.45rem;
+    font-size: 1.05rem;
+    font-weight: 650;
+    scroll-margin-top: 1rem;
+  }
+  .md p { margin: 0 0 0.85rem; }
+  .md p.fail { color: var(--fail); }
+  .md a { color: var(--link); text-decoration: none; }
+  .md a:hover { text-decoration: underline; text-underline-offset: 2px; }
+  .md code {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 0.88em;
+    background: var(--code-bg);
+    padding: 0.1em 0.35em;
+    border-radius: 4px;
+  }
+  .md pre {
+    margin: 0 0 1rem;
+    padding: 0.85rem 1rem;
+    background: var(--code-bg);
+    border-radius: 6px;
+    overflow: auto;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 0.85rem;
+    line-height: 1.5;
+  }
+  .md pre code { background: none; padding: 0; }
+  .md table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 0 0 1rem;
+    font-size: 0.92rem;
+  }
+  .md th, .md td {
+    border: 1px solid var(--rule);
+    padding: 0.45rem 0.65rem;
+    text-align: left;
+    vertical-align: top;
+  }
+  .md th { background: #f7f7f5; font-weight: 600; }
+  .md ul, .md ol { margin: 0 0 1rem; padding-left: 1.35rem; }
+  .md li { margin: 0.2rem 0; }
+  .md blockquote {
+    margin: 0 0 1rem;
+    padding: 0.15rem 0 0.15rem 0.9rem;
+    border-left: 3px solid var(--rule);
+    color: var(--muted);
+  }
+  .md footer.note {
+    margin-top: 2rem;
+    padding-top: 0.85rem;
+    border-top: 1px solid var(--rule);
+    font-size: 0.75rem;
+    color: var(--muted);
+  }
+  .crumb {
+    font-size: 0.75rem;
+    color: var(--faint);
+    margin: 0 0 0.75rem;
+  }
+  .crumb span { color: var(--muted); }
+
+  /* Scrim + drawer chrome */
+  .scrim {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 50;
+    background: rgba(46, 51, 56, 0.32);
+    border: 0;
+    padding: 0;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .scrim.show { display: block; }
+
+  /* —— Tablet: 640–959 —— left stays, right → drawer —— */
+  @media (max-width: 959px) {
+    .topbar { display: flex; }
+    .topbar .tb-files { display: none; }
+    .topbar .tb-spacer-left { display: block; }
+    .app {
+      grid-template-columns: min(var(--left-w), 34vw) minmax(0, 1fr);
+      min-height: calc(100dvh - var(--topbar-h) - var(--safe-t));
+    }
+    .side.left {
+      height: calc(100dvh - var(--topbar-h) - var(--safe-t));
+      top: 0;
+    }
+    .main-wrap {
+      height: calc(100dvh - var(--topbar-h) - var(--safe-t));
+    }
+    .side.right {
+      position: fixed;
+      top: calc(var(--topbar-h) + var(--safe-t));
+      right: 0;
+      bottom: 0;
+      width: var(--drawer-w);
+      max-width: 100%;
+      height: calc(100dvh - var(--topbar-h) - var(--safe-t));
+      z-index: 60;
+      transform: translateX(100%);
+      transition: transform 0.22s ease;
+      border-left: 1px solid var(--rule);
+      box-shadow: -4px 0 24px rgba(0, 0, 0, 0.08);
+      padding-top: 0.85rem;
+      padding-bottom: calc(2rem + var(--safe-b));
+      padding-right: calc(0.5rem + var(--safe-r));
+    }
+    body.drawer-right-open .side.right { transform: translateX(0); }
+    .page { padding: 1.5rem 1.5rem 3rem; }
+    .md h2, .md h3 { scroll-margin-top: calc(var(--topbar-h) + var(--safe-t) + 0.5rem); }
+  }
+
+  /* —— Phone: ≤639 —— reading first, both drawers —— */
+  @media (max-width: 639px) {
+    .topbar .tb-files { display: block; }
+    .topbar .tb-spacer-left { display: none; }
+    .app {
+      grid-template-columns: minmax(0, 1fr);
+      min-height: calc(100dvh - var(--topbar-h) - var(--safe-t));
+    }
+    .side.left {
+      position: fixed;
+      top: calc(var(--topbar-h) + var(--safe-t));
+      left: 0;
+      bottom: 0;
+      width: var(--drawer-w);
+      max-width: 100%;
+      height: calc(100dvh - var(--topbar-h) - var(--safe-t));
+      z-index: 60;
+      transform: translateX(-100%);
+      transition: transform 0.22s ease;
+      border-right: 1px solid var(--rule);
+      border-bottom: 0;
+      box-shadow: 4px 0 24px rgba(0, 0, 0, 0.08);
+      padding-top: 0.85rem;
+      padding-bottom: calc(2rem + var(--safe-b));
+      padding-left: calc(0.5rem + var(--safe-l));
+    }
+    body.drawer-left-open .side.left { transform: translateX(0); }
+    .main-wrap {
+      height: calc(100dvh - var(--topbar-h) - var(--safe-t));
+    }
+    .page {
+      padding: 1.25rem max(1rem, var(--safe-l)) calc(2.5rem + var(--safe-b)) max(1rem, var(--safe-r));
+    }
+    .md h1 { font-size: 1.45rem; }
+  }
+
+  @media (min-width: 960px) {
+    .topbar { display: none !important; }
+    .scrim { display: none !important; }
+    .side.left, .side.right {
+      position: sticky;
+      transform: none !important;
+      box-shadow: none !important;
+      z-index: auto;
+      width: auto;
+      height: 100dvh;
+    }
+  }
+</style>
+</head>
+<body>
+<header class="topbar" role="banner">
+  <button type="button" class="tb-btn tb-files" data-drawer="left" aria-label="打开文件列表">文件</button>
+  <span class="tb-spacer tb-spacer-left" aria-hidden="true"></span>
+  <div class="tb-title" id="tb-title">晨报</div>
+  <button type="button" class="tb-btn tb-outline" data-drawer="right" aria-label="打开大纲">大纲</button>
+</header>
+<div class="app">
+<aside class="side left" id="drawer-left" aria-label="文件">
+  <div class="side-title">文件</div>
+  <ul class="tree">
+    <li><a class="file active" data-doc="index" href="#doc-index">今日.md</a></li>
+    <li>
+      <div class="folder">Simon Willison</div>
+      <ul>
+        <li><a class="file" data-doc="simon-qwen-weights" href="#doc-simon-qwen-weights">Qwen读权重.md</a></li>
+      </ul>
+    </li>
+    <li>
+      <div class="folder">OpenAI News</div>
+      <ul>
+        <li><a class="file" data-doc="openai-physical" href="#doc-openai-physical">物理世界工程.md</a></li>
+      </ul>
+    </li>
+    <li>
+      <div class="folder">Google Developers</div>
+      <ul>
+        <li><a class="file" data-doc="gdev-cost-per-task" href="#doc-gdev-cost-per-task">按任务成本路由.md</a></li>
+      </ul>
+    </li>
+    <li>
+      <div class="folder">Google DeepMind</div>
+      <ul>
+        <li><a class="file" data-doc="dm-antigravity-chem" href="#doc-dm-antigravity-chem">Antigravity化学信息学.md</a></li>
+      </ul>
+    </li>
+    <li>
+      <div class="folder">Google Blog · Gemini</div>
+      <ul>
+        <li><a class="file" data-doc="gemini-oct-recap" href="#doc-gemini-oct-recap">十月AI回顾.md</a></li>
+      </ul>
+    </li>
+    <li>
+      <div class="folder">xAI</div>
+      <ul>
+        <li><a class="file" data-doc="xai-data-bot" href="#doc-xai-data-bot">Data-Bot.md</a></li>
+      </ul>
+    </li>
+    <li>
+      <div class="folder">Anthropic</div>
+      <ul>
+        <li><a class="file" data-doc="anthropic-drug" href="#doc-anthropic-drug">药物研发.md</a></li>
+      </ul>
+    </li>
+    <li>
+      <div class="folder">Lenny&#x27;s Newsletter</div>
+      <ul>
+        <li><a class="file" data-doc="lenny-gifts" href="#doc-lenny-gifts">节日礼物指南.md</a></li>
+      </ul>
+    </li>
+    <li>
+      <div class="folder">GitHub Trending</div>
+      <ul>
+        <li><a class="file" data-doc="gh-agent-desktop" href="#doc-gh-agent-desktop">agent-desktop.md</a></li>
+        <li><a class="file" data-doc="gh-claude-mem" href="#doc-gh-claude-mem">claude-mem.md</a></li>
+        <li><a class="file" data-doc="gh-skills" href="#doc-gh-skills">mattpocock-skills.md</a></li>
+        <li><a class="file" data-doc="gh-worktrunk" href="#doc-gh-worktrunk">worktrunk.md</a></li>
+      </ul>
+    </li>
+    <li>
+      <div class="folder">HF Papers</div>
+      <ul>
+        <li><a class="file" data-doc="hf-coworkos" href="#doc-hf-coworkos">CoworkOS.md</a></li>
+        <li><a class="file" data-doc="hf-cua-master" href="#doc-hf-cua-master">CUA-Master.md</a></li>
+        <li><a class="file" data-doc="hf-robot-use" href="#doc-hf-robot-use">Robot-Use Agents.md</a></li>
+        <li><a class="file" data-doc="hf-swe-trail" href="#doc-hf-swe-trail">SWE-Trail.md</a></li>
+        <li><a class="file" data-doc="hf-leanguard" href="#doc-hf-leanguard">LEANGUARD.md</a></li>
+        <li><a class="file" data-doc="hf-teammates" href="#doc-hf-teammates">Agents as Teammates.md</a></li>
+        <li><a class="file" data-doc="hf-maserve" href="#doc-hf-maserve">MAServeBench.md</a></li>
+        <li><a class="file" data-doc="hf-avatar" href="#doc-hf-avatar">Avatar Intelligence.md</a></li>
+        <li><a class="file" data-doc="hf-crossswe" href="#doc-hf-crossswe">CrossSWE.md</a></li>
+        <li><a class="file" data-doc="hf-continual" href="#doc-hf-continual">Coding Agents Continual Evolution.md</a></li>
+      </ul>
+    </li>
+  </ul>
+</aside>
+<main class="main-wrap"><section class="doc active" id="doc-index" data-doc="index">
+  <article class="page md">
+    <div class="crumb">今日</div>
+    <h1 id="index-h1">AI 信息晨报 · 2026-11-04</h1>
+    <p class="meta">Asia/Shanghai · 左栏点文件打开单篇</p>
+  <p>按信息源拆成独立笔记。每篇一篇 md：上面导读，下面深入；右侧是当前篇大纲。</p>
+  <h2 id="index-sources">今日有更新的源</h2>
+  <ul>
+    <li>Simon Willison · 1</li>
+    <li>OpenAI News · 1</li>
+    <li>Google Developers Blog · 1</li>
+    <li>Google DeepMind · 1</li>
+    <li>Google Blog · Gemini · 1</li>
+    <li>xAI · 1</li>
+    <li>Anthropic · 1</li>
+    <li>Lenny&#x27;s Newsletter · 1</li>
+    <li>GitHub Trending · 4</li>
+    <li>Hugging Face Papers · 10</li>
+  </ul>
+  <h2 id="index-omit">省略</h2>
+  <ul>
+    <li>AIHOT（固定跳过）</li>
+    <li>Shlok / Meta / OpenAI Developers Blog（超约一月无新或无可选日更）</li>
+  </ul>
+  <footer class="note">源清单《优秀 AI 信息源》· 跳过 AIHOT · 近三天 seen 为空</footer>
+  </article>
+</section>
+<section class="doc" id="doc-simon-qwen-weights" data-doc="simon-qwen-weights">
+  <article class="page md">
+    <div class="crumb">Simon Willison / <span>Qwen读权重.md</span></div>
+    <h1 id="simon-qwen-weights-h1">笔记本上的 Qwen 3.8 也能读模型权重</h1>
+    <p class="meta">Simon Willison · 2026-11-03</p>
+  <p>Takehi 等人那篇「权重空间编程」火起来之后，Simon 拿本机 Qwen 3.8 27B 复现：模型能直接读、甚至改一段浮点权重文本。不是只有 GPT‑6 Astra 才干得了。</p>
+  <h2 id="simon-qwen-deep">深入分析</h2>
+  <p>论文形状的博客演示 frontier 模型把神经网络权重当一等公民读写。Simon 用本地 27B 跑通同类例子，说明「看懂权重」这条能力正在从闭源前沿往可本地跑的开源模型下沉。</p>
+  <p>对做本地 agent / 工具链的人：权重解释不再绑定某一家 API。但演示仍偏玩具与小模型；真要改大模型权重、还要验证行为，工程差距还在。</p>
+  <p><a href="https://simonwillison.net/2026/Nov/3/qwen-can-interpret-model-weights/" target="_blank" rel="noopener">原文</a></p>
+  </article>
+</section>
+<section class="doc" id="doc-openai-physical" data-doc="openai-physical">
+  <article class="page md">
+    <div class="crumb">OpenAI News / <span>物理世界工程.md</span></div>
+    <h1 id="openai-physical-h1">OpenAI 把模型推进物理产品工程</h1>
+    <p class="meta">OpenAI News · 2026-11-03</p>
+  <p>机械、电气、系统端到端：Astra/Codex 帮忙画外壳、布 PCB、写固件。内部硬件团队 token 用量自二月起涨了约 23 倍；对外拉赛车队和马自达做真实工程协作。</p>
+  <h2 id="openai-physical-deep">深入分析</h2>
+  <h3 id="openai-physical-astra">Astra 端到端造设备</h3>
+  <p>两人副业一周用 Astra 定义需求并设计外壳/PCB/固件，对接 Codex 对话设备；代工厂一个月内打小批量样。制造公差、装配细节仍要多轮人工，模型还不会「一次过产」。</p>
+  <h3 id="openai-physical-measure">评测与合作</h3>
+  <p>BenchCAD 2.0 测 3D 件与电路连接识别；内部新模型均分 0.875，高于 GPT‑6 Astra 最高推理档的 0.594。Chip Ganassi 用扫描→可编辑 CAD；马自达用仿真探空气动力学与碰撞安全。</p>
+  <p>对 agent runtime：computer use + 专业 CAD/ECAD 工具链是下一块硬骨头；评测已经从纯代码扩到工程图纸。</p>
+  <p><a href="https://openai.com/index/accelerating-engineering-for-the-physical-world/" target="_blank" rel="noopener">原文</a></p>
+  </article>
+</section>
+<section class="doc" id="doc-gdev-cost-per-task" data-doc="gdev-cost-per-task">
+  <article class="page md">
+    <div class="crumb">Google Developers / <span>按任务成本路由.md</span></div>
+    <h1 id="gdev-cost-per-task-h1">别看 token 价，看「做成一题」花多少</h1>
+    <p class="meta">Google Developers Blog · 2026-11-03</p>
+  <p>自主 coding agent 账单在涨：真正该盯的是 cost per successful task。用便宜分类器（文中举例 Jev）把简单题打到 Flash‑Lite，难题再升 Flash low thinking。</p>
+  <h2 id="gdev-cpt-deep">深入分析</h2>
+  <p>正则/字数启发式在手里 16 题很好看，到 34 道未见题准确率掉到约 70%；原子化 yes/no（Noul）分类器在未见题 34/34。砍 maxOutputTokens 当「少想一点」是错的——上限不是思考预算旋钮，只会截断难题。</p>
+  <p>无路由最强基线是 Flash + low thinking 全对；路由到 Flash‑Lite→复杂再升，也能全对且更省时。长上下文 agent 慎频繁换模型，否则 Context Caching 折扣会废。指标口径：成功任务总成本，不是每百万 token。</p>
+  <p><a href="https://developers.googleblog.com/cost-per-task-using-cheap-classifiers-to-route-across-gemini-models-and-thinking-levels/" target="_blank" rel="noopener">原文</a></p>
+  </article>
+</section>
+<section class="doc" id="doc-dm-antigravity-chem" data-doc="dm-antigravity-chem">
+  <article class="page md">
+    <div class="crumb">Google DeepMind / <span>Antigravity化学信息学.md</span></div>
+    <h1 id="dm-antigravity-chem-h1">Antigravity + 化学信息学 Skills：一小时走完数天药化循环</h1>
+    <p class="meta">Google DeepMind · 2026-11-03</p>
+  <p>给 Google Antigravity 挂上 Cheminformatics Skills（RDKit / ChEMBL / PubChem）：文献里捞分子、配对分析、建药效模型、提合成路线。肺癌药案例里，原先数天的一轮压缩到约一小时。</p>
+  <h2 id="dm-chem-deep">深入分析</h2>
+  <p>分工清楚：语言模型管编排与推理，确定性化学工具做计算。展示刚性化（crizotinib→lorlatinib 类）的匹配分子对分析、交互式浏览、反应机理图。</p>
+  <p>边界写得很硬：稀疏数据与实验噪声限制预测精度，输出是可验证假设不是成药。Skills 插件形态对 agent runtime 很有参考——领域工具封装成 skill，而不是把化学逻辑塞进 prompt。</p>
+  <p><a href="https://deepmind.google/blog/agentic-cheminformatics-with-google-antigravity/" target="_blank" rel="noopener">原文</a></p>
+  </article>
+</section>
+<section class="doc" id="doc-gemini-oct-recap" data-doc="gemini-oct-recap">
+  <article class="page md">
+    <div class="crumb">Google Blog · Gemini / <span>十月AI回顾.md</span></div>
+    <h1 id="gemini-oct-recap-h1">Google 十月 AI 回顾：Argon、Carbon、Genie 4</h1>
+    <p class="meta">Google Blog · Gemini · 2026-11-02</p>
+  <p>月度打包：Gemini 4 Argon 全球推开，两周后宣布偏长程工程与网络安全的 Carbon（先政府/网络安全伙伴预发）；Genie 4 实时可交互世界模型；SynthID Detector、EmbeddingGemma 2、Suncatcher 轨道 TPU 回诗等。</p>
+  <h2 id="gemini-oct-deep">深入分析</h2>
+  <p>产品线节奏：Argon 覆盖 Studio/API/Cloud/Search/App 与机器人；Carbon 刻意慢放，安全护栏与 Fairwind 伙伴测试优先。Genie 4 强调给机器人与 agent 造安全训练环境。</p>
+  <p>开发者向：EmbeddingGemma 2（约 7.4 亿参）端侧多模态检索；Playground 无代码做游戏；Android 可把 AI Studio 应用装进 Play。科学侧有地理推理 agent 实验与 Deep Review 公开。</p>
+  <p><a href="https://blog.google/innovation-and-ai/technology/ai/google-ai-updates-october-2026/" target="_blank" rel="noopener">原文</a></p>
+  </article>
+</section>
+<section class="doc" id="doc-xai-data-bot" data-doc="xai-data-bot">
+  <article class="page md">
+    <div class="crumb">xAI / <span>Data-Bot.md</span></div>
+    <h1 id="xai-data-bot-h1">xAI 内部 Data Bot：给每个团队塞一个数据科学家</h1>
+    <p class="meta">xAI · 2026-11-02</p>
+  <p>SpaceXSI 数据团队把指标、实验、图表、dbt 规范写进 Team Bot skills；共享记忆可审批。Slack 里答数、写报告、按周推指标。自称上周约扛了 70 小时原属数据组的活。</p>
+  <h2 id="xai-databot-deep">深入分析</h2>
+  <p>形态不是「每人一个私人 bot」，而是团队维护的共享技能面 + 可审记忆。PM/增长/营销直接问仓、看转化、出 Hex/Databricks 看板；复杂判断仍回流真人。</p>
+  <p>对 agent 产品：Team Bot = 组织知识的一等公民；skills 覆盖指标定义与实验流程，比裸接 SQL 工具靠谱。记忆要有经理审批，隐私与错误传播可控。</p>
+  <p><a href="https://x.ai/news/data-bot" target="_blank" rel="noopener">原文</a></p>
+  </article>
+</section>
+<section class="doc" id="doc-anthropic-drug" data-doc="anthropic-drug">
+  <article class="page md">
+    <div class="crumb">Anthropic / <span>药物研发.md</span></div>
+    <h1 id="anthropic-drug-h1">Claude 加速药物研发：六家合作刚起头</h1>
+    <p class="meta">Anthropic · 2026-10-27</p>
+  <p>Oct 27 最近一天：Anthropic 科学家和六家药研机构深度合作，用 Claude 推药物开发前期。同日还有 GSA 政府折扣、agents 如何影响专家判断等，篇幅短记一条主线。</p>
+  <h2 id="anthropic-drug-deep">深入分析</h2>
+  <p>官方定性是「早期进展」不是产品发布。和 DeepMind Antigravity 化学 skill 同一周撞上药化叙事，但 Anthropic 偏研究合作、DeepMind 偏可下载 skill 工作台。</p>
+  <p><a href="https://www.anthropic.com/research/early-progress-drug-development" target="_blank" rel="noopener">原文</a></p>
+  </article>
+</section>
+<section class="doc" id="doc-lenny-gifts" data-doc="lenny-gifts">
+  <article class="page md">
+    <div class="crumb">Lenny&#x27;s Newsletter / <span>节日礼物指南.md</span></div>
+    <h1 id="lenny-gifts-h1">Lenny 第六年节日礼物指南</h1>
+    <p class="meta">Lenny&#x27;s Newsletter · 2026-11-03</p>
+  <p>邮件到手：100+ 他们自己在用的礼物，无联盟链接；两类投资人标记、回归冠军标记。另有 Insider 工具栈一年白嫖备注。产品向闲聊，不当技术深潜。</p>
+  <h2 id="lenny-gifts-deep">深入分析</h2>
+  <p>趣味向清单（电子墨水鸟、计时沙漏、奇怪糖果等）。和 agent runtime 弱相关，按惯例保留 Lenny 日更。同日前后还有 How I AI 播客邮，主信选礼物指南。</p>
+  <p><a href="https://www.lennysnewsletter.com/p/lennys-newsletter-holiday-gift-guide-057" target="_blank" rel="noopener">原文</a></p>
+  </article>
+</section>
+<section class="doc" id="doc-gh-agent-desktop" data-doc="gh-agent-desktop">
+  <article class="page md">
+    <div class="crumb">GitHub Trending / <span>agent-desktop.md</span></div>
+    <h1 id="gh-agent-desktop-h1">vercel-labs/agent-desktop：无障碍树版电脑操控</h1>
+    <p class="meta">GitHub Trending · 2026-11-04</p>
+  <p>Trending 日榜。CLI/C 库/MCP：读桌面 App 无障碍树成带 ref 的 JSON，点按对着 ref，不靠截图像素。循环在调用方，库里没有模型。</p>
+  <h2 id="gh-ad-deep">深入分析</h2>
+  <h3 id="gh-ad-what">在干什么</h3>
+  <p>编译期按 OS 选 AX / UI Automation / AT-SPI。默认无头动作；ref 绑 snapshot，过期返回 STALE。自带 skills 教 agent 观察→行动→再观察；`agent-desktop mcp` 暴露全套命令。</p>
+  <h3 id="gh-ad-taste">仓库初识（taste-project）</h3>
+  <p>报告目录 intermediate/repos/vercel-labs-agent-desktop/。主线 crates/{core,macos,windows,linux,ffi} + skills。边界：隐私内容可能进 snapshot；自定义绘制控件可能不在树上。</p>
+  <pre><code>Agent/MCP → CLI或FFI → core → PlatformAdapter → OS AX
+← JSON envelope（ok / data / error.disposition）</code></pre>
+  <p><a href="https://github.com/vercel-labs/agent-desktop" target="_blank" rel="noopener">原文</a></p>
+  </article>
+</section>
+<section class="doc" id="doc-gh-claude-mem" data-doc="gh-claude-mem">
+  <article class="page md">
+    <div class="crumb">GitHub Trending / <span>claude-mem.md</span></div>
+    <h1 id="gh-claude-mem-h1">thedotmack/claude-mem：跨会话记忆压缩</h1>
+    <p class="meta">GitHub Trending · 2026-11-04</p>
+  <p>日榜第一附近。抓工具观察→语义压缩→新会话 MCP 检索再注入。装插件接 Claude Code / OpenCode / Cursor / Grok Bot 等；可走托管 observer 或自带 key。</p>
+  <h2 id="gh-cm-deep">深入分析</h2>
+  <h3 id="gh-cm-what">在干什么</h3>
+  <p>会话断了上下文就丢——它把观察落库并压缩，下次可搜。Grok Bot 无宿主 hook 时改盯聊天日志；针类观察可追加到 awareness 日志行。</p>
+  <h3 id="gh-cm-taste">仓库初识（taste-project）</h3>
+  <p>报告目录 intermediate/repos/thedotmack-claude-mem/。主线 hooks/storage/server + 多 IDE plugin。边界：观察进记忆库，敏感项目要选型；托管路径有账号/试用。</p>
+  <pre><code>宿主会话 → hooks/日志观察 → observer 压缩 → sqlite/同步
+新会话 → MCP 检索 → 记忆注入</code></pre>
+  <p><a href="https://github.com/thedotmack/claude-mem" target="_blank" rel="noopener">原文</a></p>
+  </article>
+</section>
+<section class="doc" id="doc-gh-skills" data-doc="gh-skills">
+  <article class="page md">
+    <div class="crumb">GitHub Trending / <span>mattpocock-skills.md</span></div>
+    <h1 id="gh-skills-h1">mattpocock/skills：工程师自用 skills 集</h1>
+    <p class="meta">GitHub Trending · 2026-11-04</p>
+  <p>「Skills for Real Engineers」，直接从作者 .agents 目录掏出来的技能包。和 agent-desktop 自带 skill、Antigravity Science plugin 同一波「技能可分发」叙事。</p>
+  <h2 id="gh-skills-deep">深入分析</h2>
+  <p>短评：个人工作流技能外溢成仓库，适合当 skills 目录结构与粒度的参照，不必当框架。</p>
+  <p><a href="https://github.com/mattpocock/skills" target="_blank" rel="noopener">原文</a></p>
+  </article>
+</section>
+<section class="doc" id="doc-gh-worktrunk" data-doc="gh-worktrunk">
+  <article class="page md">
+    <div class="crumb">GitHub Trending / <span>worktrunk.md</span></div>
+    <h1 id="gh-worktrunk-h1">max-sixty/worktrunk：给并行 agent 管 git worktree</h1>
+    <p class="meta">GitHub Trending · 2026-11-04</p>
+  <p>Rust CLI，专为并行 AI agent 工作流管 Git worktree。多 agent 同时改代码时，worktree 隔离比共分支硬碰硬干净。</p>
+  <h2 id="gh-worktrunk-deep">深入分析</h2>
+  <p>短评：runtime/编排层常缺「多会话目录隔离」工具；和 sandbox、权限确认是一类基础设施问题。</p>
+  <p><a href="https://github.com/max-sixty/worktrunk" target="_blank" rel="noopener">原文</a></p>
+  </article>
+</section>
+<section class="doc" id="doc-hf-coworkos" data-doc="hf-coworkos">
+  <article class="page md">
+    <div class="crumb">HF Papers / <span>CoworkOS.md</span></div>
+    <h1 id="hf-coworkos-h1">Scaling Agent Coworkers for Real-world Automation</h1>
+    <p class="meta">Hugging Face Papers · 2026-11-03</p>
+  <p>多 agent 同事规模化，偏真实自动化。</p>
+  <h2 id="hf-coworkos-deep">深入分析</h2>
+  <p>白名单短记。arXiv/HF：2611.03178。</p>
+  <p><a href="https://huggingface.co/papers/2611.03178" target="_blank" rel="noopener">原文</a></p>
+  </article>
+</section>
+<section class="doc" id="doc-hf-cua-master" data-doc="hf-cua-master">
+  <article class="page md">
+    <div class="crumb">HF Papers / <span>CUA-Master.md</span></div>
+    <h1 id="hf-cua-master-h1">Scaling Computer-use Agents through Open-World Recursive Improvements</h1>
+    <p class="meta">Hugging Face Papers · 2026-11-03</p>
+  <p>电脑操控 agent，开放世界递归改进。</p>
+  <h2 id="hf-cua-master-deep">深入分析</h2>
+  <p>白名单短记。arXiv/HF：2611.03126。</p>
+  <p><a href="https://huggingface.co/papers/2611.03126" target="_blank" rel="noopener">原文</a></p>
+  </article>
+</section>
+<section class="doc" id="doc-hf-robot-use" data-doc="hf-robot-use">
+  <article class="page md">
+    <div class="crumb">HF Papers / <span>Robot-Use Agents.md</span></div>
+    <h1 id="hf-robot-use-h1">Democratizing Robot-Use Agents: A Unified Harness with Open Models</h1>
+    <p class="meta">Hugging Face Papers · 2026-11-03</p>
+  <p>统一 harness + 开源模型做机器人操控 agent。</p>
+  <h2 id="hf-robot-use-deep">深入分析</h2>
+  <p>白名单短记。arXiv/HF：2611.01560。</p>
+  <p><a href="https://huggingface.co/papers/2611.01560" target="_blank" rel="noopener">原文</a></p>
+  </article>
+</section>
+<section class="doc" id="doc-hf-swe-trail" data-doc="hf-swe-trail">
+  <article class="page md">
+    <div class="crumb">HF Papers / <span>SWE-Trail.md</span></div>
+    <h1 id="hf-swe-trail-h1">History-Guided Trajectory Collection for Coding Agent Training</h1>
+    <p class="meta">Hugging Face Papers · 2026-11-03</p>
+  <p>用历史轨迹喂 coding agent 训练。</p>
+  <h2 id="hf-swe-trail-deep">深入分析</h2>
+  <p>白名单短记。arXiv/HF：2611.02074。</p>
+  <p><a href="https://huggingface.co/papers/2611.02074" target="_blank" rel="noopener">原文</a></p>
+  </article>
+</section>
+<section class="doc" id="doc-hf-leanguard" data-doc="hf-leanguard">
+  <article class="page md">
+    <div class="crumb">HF Papers / <span>LEANGUARD.md</span></div>
+    <h1 id="hf-leanguard-h1">Lean-Verified Guardrails for Tool-Using Agents</h1>
+    <p class="meta">Hugging Face Papers · 2026-11-03</p>
+  <p>用 Lean 校验工具调用 agent 的护栏。</p>
+  <h2 id="hf-leanguard-deep">深入分析</h2>
+  <p>白名单短记。arXiv/HF：2611.02332。</p>
+  <p><a href="https://huggingface.co/papers/2611.02332" target="_blank" rel="noopener">原文</a></p>
+  </article>
+</section>
+<section class="doc" id="doc-hf-teammates" data-doc="hf-teammates">
+  <article class="page md">
+    <div class="crumb">HF Papers / <span>Agents as Teammates.md</span></div>
+    <h1 id="hf-teammates-h1">Measuring AI Agents as Teammates with Collaborative Intelligence</h1>
+    <p class="meta">Hugging Face Papers · 2026-11-03</p>
+  <p>把 agent 当队友测协作智力。</p>
+  <h2 id="hf-teammates-deep">深入分析</h2>
+  <p>白名单短记。arXiv/HF：2611.02633。</p>
+  <p><a href="https://huggingface.co/papers/2611.02633" target="_blank" rel="noopener">原文</a></p>
+  </article>
+</section>
+<section class="doc" id="doc-hf-maserve" data-doc="hf-maserve">
+  <article class="page md">
+    <div class="crumb">HF Papers / <span>MAServeBench.md</span></div>
+    <h1 id="hf-maserve-h1">Benchmarking Multi-Agent LLM Serving Systems</h1>
+    <p class="meta">Hugging Face Papers · 2026-11-03</p>
+  <p>多 agent 服务系统分层协作负载基准。</p>
+  <h2 id="hf-maserve-deep">深入分析</h2>
+  <p>白名单短记。arXiv/HF：2610.40293。</p>
+  <p><a href="https://huggingface.co/papers/2610.40293" target="_blank" rel="noopener">原文</a></p>
+  </article>
+</section>
+<section class="doc" id="doc-hf-avatar" data-doc="hf-avatar">
+  <article class="page md">
+    <div class="crumb">HF Papers / <span>Avatar Intelligence.md</span></div>
+    <h1 id="hf-avatar-h1">Amplifying Human Agency Through Persistent Personal Agents</h1>
+    <p class="meta">Hugging Face Papers · 2026-11-03</p>
+  <p>持久个人 agent 放大人的能动性。</p>
+  <h2 id="hf-avatar-deep">深入分析</h2>
+  <p>白名单短记。arXiv/HF：2611.03092。</p>
+  <p><a href="https://huggingface.co/papers/2611.03092" target="_blank" rel="noopener">原文</a></p>
+  </article>
+</section>
+<section class="doc" id="doc-hf-crossswe" data-doc="hf-crossswe">
+  <article class="page md">
+    <div class="crumb">HF Papers / <span>CrossSWE.md</span></div>
+    <h1 id="hf-crossswe-h1">Benchmarking Cross-Repository Joint Development for Coding Agents</h1>
+    <p class="meta">Hugging Face Papers · 2026-11-03</p>
+  <p>跨仓联合开发 coding agent 基准。</p>
+  <h2 id="hf-crossswe-deep">深入分析</h2>
+  <p>白名单短记。arXiv/HF：2611.01484。</p>
+  <p><a href="https://huggingface.co/papers/2611.01484" target="_blank" rel="noopener">原文</a></p>
+  </article>
+</section>
+<section class="doc" id="doc-hf-continual" data-doc="hf-continual">
+  <article class="page md">
+    <div class="crumb">HF Papers / <span>Coding Agents Continual Evolution.md</span></div>
+    <h1 id="hf-continual-h1">Can Coding Agents Sustain Continual Evolution without Forgetting?</h1>
+    <p class="meta">Hugging Face Papers · 2026-11-03</p>
+  <p>coding agent 持续进化是否会忘。</p>
+  <h2 id="hf-continual-deep">深入分析</h2>
+  <p>白名单短记。arXiv/HF：2611.03219。</p>
+  <p><a href="https://huggingface.co/papers/2611.03219" target="_blank" rel="noopener">原文</a></p>
+  </article>
+</section></main>
+<aside class="side right" id="drawer-right" aria-label="大纲">
+  <div class="side-title">大纲</div>
+  <div class="outline-panel active" data-doc="index"><nav class="outline"><a class="h1" href="#index-h1">AI 信息晨报 · 2026-11-04</a><a class="h2" href="#index-sources">今日有更新的源</a><a class="h2" href="#index-omit">省略</a></nav></div>
+<div class="outline-panel" data-doc="simon-qwen-weights"><nav class="outline"><a class="h1" href="#simon-qwen-weights-h1">笔记本上的 Qwen 3.8 也能读模型权重</a><a class="h2" href="#simon-qwen-deep">深入分析</a></nav></div>
+<div class="outline-panel" data-doc="openai-physical"><nav class="outline"><a class="h1" href="#openai-physical-h1">OpenAI 把模型推进物理产品工程</a><a class="h2" href="#openai-physical-deep">深入分析</a><a class="h3" href="#openai-physical-astra">Astra 端到端造设备</a><a class="h3" href="#openai-physical-measure">评测与合作</a></nav></div>
+<div class="outline-panel" data-doc="gdev-cost-per-task"><nav class="outline"><a class="h1" href="#gdev-cost-per-task-h1">别看 token 价，看「做成一题」花多少</a><a class="h2" href="#gdev-cpt-deep">深入分析</a></nav></div>
+<div class="outline-panel" data-doc="dm-antigravity-chem"><nav class="outline"><a class="h1" href="#dm-antigravity-chem-h1">Antigravity + 化学信息学 Skills：一小时走完数天药化循环</a><a class="h2" href="#dm-chem-deep">深入分析</a></nav></div>
+<div class="outline-panel" data-doc="gemini-oct-recap"><nav class="outline"><a class="h1" href="#gemini-oct-recap-h1">Google 十月 AI 回顾：Argon、Carbon、Genie 4</a><a class="h2" href="#gemini-oct-deep">深入分析</a></nav></div>
+<div class="outline-panel" data-doc="xai-data-bot"><nav class="outline"><a class="h1" href="#xai-data-bot-h1">xAI 内部 Data Bot：给每个团队塞一个数据科学家</a><a class="h2" href="#xai-databot-deep">深入分析</a></nav></div>
+<div class="outline-panel" data-doc="anthropic-drug"><nav class="outline"><a class="h1" href="#anthropic-drug-h1">Claude 加速药物研发：六家合作刚起头</a><a class="h2" href="#anthropic-drug-deep">深入分析</a></nav></div>
+<div class="outline-panel" data-doc="lenny-gifts"><nav class="outline"><a class="h1" href="#lenny-gifts-h1">Lenny 第六年节日礼物指南</a><a class="h2" href="#lenny-gifts-deep">深入分析</a></nav></div>
+<div class="outline-panel" data-doc="gh-agent-desktop"><nav class="outline"><a class="h1" href="#gh-agent-desktop-h1">vercel-labs/agent-desktop：无障碍树版电脑操控</a><a class="h2" href="#gh-ad-deep">深入分析</a><a class="h3" href="#gh-ad-what">在干什么</a><a class="h3" href="#gh-ad-taste">仓库初识（taste-project）</a></nav></div>
+<div class="outline-panel" data-doc="gh-claude-mem"><nav class="outline"><a class="h1" href="#gh-claude-mem-h1">thedotmack/claude-mem：跨会话记忆压缩</a><a class="h2" href="#gh-cm-deep">深入分析</a><a class="h3" href="#gh-cm-what">在干什么</a><a class="h3" href="#gh-cm-taste">仓库初识（taste-project）</a></nav></div>
+<div class="outline-panel" data-doc="gh-skills"><nav class="outline"><a class="h1" href="#gh-skills-h1">mattpocock/skills：工程师自用 skills 集</a><a class="h2" href="#gh-skills-deep">深入分析</a></nav></div>
+<div class="outline-panel" data-doc="gh-worktrunk"><nav class="outline"><a class="h1" href="#gh-worktrunk-h1">max-sixty/worktrunk：给并行 agent 管 git worktree</a><a class="h2" href="#gh-worktrunk-deep">深入分析</a></nav></div>
+<div class="outline-panel" data-doc="hf-coworkos"><nav class="outline"><a class="h1" href="#hf-coworkos-h1">Scaling Agent Coworkers for Real-world Automation</a><a class="h2" href="#hf-coworkos-deep">深入分析</a></nav></div>
+<div class="outline-panel" data-doc="hf-cua-master"><nav class="outline"><a class="h1" href="#hf-cua-master-h1">Scaling Computer-use Agents through Open-World Recursive Improvements</a><a class="h2" href="#hf-cua-master-deep">深入分析</a></nav></div>
+<div class="outline-panel" data-doc="hf-robot-use"><nav class="outline"><a class="h1" href="#hf-robot-use-h1">Democratizing Robot-Use Agents: A Unified Harness with Open Models</a><a class="h2" href="#hf-robot-use-deep">深入分析</a></nav></div>
+<div class="outline-panel" data-doc="hf-swe-trail"><nav class="outline"><a class="h1" href="#hf-swe-trail-h1">History-Guided Trajectory Collection for Coding Agent Training</a><a class="h2" href="#hf-swe-trail-deep">深入分析</a></nav></div>
+<div class="outline-panel" data-doc="hf-leanguard"><nav class="outline"><a class="h1" href="#hf-leanguard-h1">Lean-Verified Guardrails for Tool-Using Agents</a><a class="h2" href="#hf-leanguard-deep">深入分析</a></nav></div>
+<div class="outline-panel" data-doc="hf-teammates"><nav class="outline"><a class="h1" href="#hf-teammates-h1">Measuring AI Agents as Teammates with Collaborative Intelligence</a><a class="h2" href="#hf-teammates-deep">深入分析</a></nav></div>
+<div class="outline-panel" data-doc="hf-maserve"><nav class="outline"><a class="h1" href="#hf-maserve-h1">Benchmarking Multi-Agent LLM Serving Systems</a><a class="h2" href="#hf-maserve-deep">深入分析</a></nav></div>
+<div class="outline-panel" data-doc="hf-avatar"><nav class="outline"><a class="h1" href="#hf-avatar-h1">Amplifying Human Agency Through Persistent Personal Agents</a><a class="h2" href="#hf-avatar-deep">深入分析</a></nav></div>
+<div class="outline-panel" data-doc="hf-crossswe"><nav class="outline"><a class="h1" href="#hf-crossswe-h1">Benchmarking Cross-Repository Joint Development for Coding Agents</a><a class="h2" href="#hf-crossswe-deep">深入分析</a></nav></div>
+<div class="outline-panel" data-doc="hf-continual"><nav class="outline"><a class="h1" href="#hf-continual-h1">Can Coding Agents Sustain Continual Evolution without Forgetting?</a><a class="h2" href="#hf-continual-deep">深入分析</a></nav></div>
+</aside>
+</div>
+<button type="button" class="scrim" id="scrim" aria-label="关闭面板" tabindex="-1"></button>
+<script>
+(function () {
+  var body = document.body;
+  var scrim = document.getElementById('scrim');
+  var titleEl = document.getElementById('tb-title');
+
+  function closeDrawers() {
+    body.classList.remove('drawer-left-open', 'drawer-right-open', 'drawer-open');
+    if (scrim) scrim.classList.remove('show');
+  }
+
+  function openDrawer(side) {
+    closeDrawers();
+    if (side === 'left') body.classList.add('drawer-left-open', 'drawer-open');
+    if (side === 'right') body.classList.add('drawer-right-open', 'drawer-open');
+    if (scrim) scrim.classList.add('show');
+  }
+
+  function toggleDrawer(side) {
+    var cls = side === 'left' ? 'drawer-left-open' : 'drawer-right-open';
+    if (body.classList.contains(cls)) closeDrawers();
+    else openDrawer(side);
+  }
+
+  function shortTitle(id) {
+    var active = document.querySelector('.tree a.file[data-doc="' + id + '"]');
+    if (!active) return '晨报';
+    var t = (active.textContent || '').replace(/\.md\s*$/, '').trim();
+    return t || '晨报';
+  }
+
+  function openDoc(id, push) {
+    document.querySelectorAll('.doc').forEach(function (el) {
+      el.classList.toggle('active', el.id === 'doc-' + id);
+    });
+    document.querySelectorAll('.outline-panel').forEach(function (el) {
+      el.classList.toggle('active', el.dataset.doc === id);
+    });
+    document.querySelectorAll('.tree a.file').forEach(function (a) {
+      a.classList.toggle('active', a.dataset.doc === id);
+    });
+    if (titleEl) titleEl.textContent = shortTitle(id);
+    var main = document.querySelector('.main-wrap');
+    if (main) main.scrollTop = 0;
+    if (push !== false) {
+      try { history.replaceState(null, '', '#' + id); } catch (e) {}
+    }
+  }
+
+  document.querySelectorAll('.tree a.file').forEach(function (a) {
+    a.addEventListener('click', function (e) {
+      e.preventDefault();
+      openDoc(a.dataset.doc);
+      closeDrawers();
+    });
+  });
+
+  document.querySelectorAll('.outline a').forEach(function (a) {
+    a.addEventListener('click', function () {
+      /* let hash scroll happen; close drawer after */
+      setTimeout(closeDrawers, 10);
+    });
+  });
+
+  document.querySelectorAll('.topbar .tb-btn[data-drawer]').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      toggleDrawer(btn.getAttribute('data-drawer'));
+    });
+  });
+
+  if (scrim) {
+    scrim.addEventListener('click', function () { closeDrawers(); });
+  }
+
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape') closeDrawers();
+  });
+
+  window.addEventListener('resize', function () {
+    if (window.matchMedia('(min-width: 960px)').matches) closeDrawers();
+  });
+
+  var hash = (location.hash || '').replace(/^#/, '');
+  var initial = hash || (document.querySelector('.tree a.file') || {}).dataset.doc;
+  /* if hash points at a heading id, resolve to its doc */
+  if (hash && !document.getElementById('doc-' + hash)) {
+    var heading = document.getElementById(hash);
+    if (heading) {
+      var sec = heading.closest('.doc');
+      if (sec && sec.id) initial = sec.id.replace(/^doc-/, '');
+    }
+  }
+  if (initial) openDoc(initial, false);
+})();
+</script>
+</body>
+</html>

@@ -11,7 +11,7 @@
 - [电脑运维 (ops)（27）](#ops)
 - [程序开发 (dev)（54）](#dev)
 - [生活管理相关 (lifestyle)（10）](#lifestyle)
-- [调研报告类 (research)（28）](#research)
+- [调研报告类 (research)（29）](#research)
 
 ---
 
@@ -129,6 +129,7 @@
 
 | Skill | 说明 |
 |-------|------|
+| [`ai-morning-digest`](research/ai-morning-digest/SKILL.md) | 跑 AI 信息晨报/日报：按各源「最近一天」抓取，去重、白名单与条数上限，产出三栏 HTML 日报并定时推送。 |
 | [`Summarize`](research/Summarize/SKILL.md) | Summarize URLs or files with the summarize CLI (web, PDFs, images, audio, YouTube). |
 | [`baoyu-article-illustrator`](research/baoyu-article-illustrator/SKILL.md) | author: 宝玉 (JimLiu) |
 | [`baoyu-comic`](research/baoyu-comic/SKILL.md) | Knowledge comics (知识漫画): educational, biography, tutorial. |

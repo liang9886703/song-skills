@@ -1,0 +1,178 @@
+[
+  {
+    "id": "simon-qwen-weights",
+    "source": "Simon Willison",
+    "title": "笔记本上的 Qwen 3.8 也能读模型权重",
+    "date": "2026-11-03",
+    "url": "https://simonwillison.net/2026/Nov/3/qwen-can-interpret-model-weights/",
+    "file": "Qwen读权重.md"
+  },
+  {
+    "id": "openai-physical",
+    "source": "OpenAI News",
+    "title": "OpenAI 把模型推进物理产品工程",
+    "date": "2026-11-03",
+    "url": "https://openai.com/index/accelerating-engineering-for-the-physical-world/",
+    "file": "物理世界工程.md"
+  },
+  {
+    "id": "gdev-cost-per-task",
+    "source": "Google Developers Blog",
+    "title": "别看 token 价，看「做成一题」花多少",
+    "date": "2026-11-03",
+    "url": "https://developers.googleblog.com/cost-per-task-using-cheap-classifiers-to-route-across-gemini-models-and-thinking-levels/",
+    "file": "按任务成本路由.md"
+  },
+  {
+    "id": "dm-antigravity-chem",
+    "source": "Google DeepMind",
+    "title": "Antigravity + 化学信息学 Skills：一小时走完数天药化循环",
+    "date": "2026-11-03",
+    "url": "https://deepmind.google/blog/agentic-cheminformatics-with-google-antigravity/",
+    "file": "Antigravity化学信息学.md"
+  },
+  {
+    "id": "gemini-oct-recap",
+    "source": "Google Blog · Gemini",
+    "title": "Google 十月 AI 回顾：Argon、Carbon、Genie 4",
+    "date": "2026-11-02",
+    "url": "https://blog.google/innovation-and-ai/technology/ai/google-ai-updates-october-2026/",
+    "file": "十月AI回顾.md"
+  },
+  {
+    "id": "xai-data-bot",
+    "source": "xAI",
+    "title": "xAI 内部 Data Bot：给每个团队塞一个数据科学家",
+    "date": "2026-11-02",
+    "url": "https://x.ai/news/data-bot",
+    "file": "Data-Bot.md"
+  },
+  {
+    "id": "anthropic-drug",
+    "source": "Anthropic",
+    "title": "Claude 加速药物研发：六家合作刚起头",
+    "date": "2026-10-27",
+    "url": "https://www.anthropic.com/research/early-progress-drug-development",
+    "file": "药物研发.md"
+  },
+  {
+    "id": "lenny-gifts",
+    "source": "Lenny's Newsletter",
+    "title": "Lenny 第六年节日礼物指南",
+    "date": "2026-11-03",
+    "url": "https://www.lennysnewsletter.com/p/lennys-newsletter-holiday-gift-guide-057",
+    "file": "节日礼物指南.md"
+  },
+  {
+    "id": "gh-agent-desktop",
+    "source": "GitHub Trending",
+    "title": "vercel-labs/agent-desktop：无障碍树版电脑操控",
+    "date": "2026-11-04",
+    "url": "https://github.com/vercel-labs/agent-desktop",
+    "file": "agent-desktop.md"
+  },
+  {
+    "id": "gh-claude-mem",
+    "source": "GitHub Trending",
+    "title": "thedotmack/claude-mem：跨会话记忆压缩",
+    "date": "2026-11-04",
+    "url": "https://github.com/thedotmack/claude-mem",
+    "file": "claude-mem.md"
+  },
+  {
+    "id": "gh-skills",
+    "source": "GitHub Trending",
+    "title": "mattpocock/skills：工程师自用 skills 集",
+    "date": "2026-11-04",
+    "url": "https://github.com/mattpocock/skills",
+    "file": "mattpocock-skills.md"
+  },
+  {
+    "id": "gh-worktrunk",
+    "source": "GitHub Trending",
+    "title": "max-sixty/worktrunk：给并行 agent 管 git worktree",
+    "date": "2026-11-04",
+    "url": "https://github.com/max-sixty/worktrunk",
+    "file": "worktrunk.md"
+  },
+  {
+    "id": "hf-coworkos",
+    "source": "Hugging Face Papers",
+    "title": "Scaling Agent Coworkers for Real-world Automation",
+    "date": "2026-11-03",
+    "url": "https://huggingface.co/papers/2611.03178",
+    "file": "CoworkOS.md"
+  },
+  {
+    "id": "hf-cua-master",
+    "source": "Hugging Face Papers",
+    "title": "Scaling Computer-use Agents through Open-World Recursive Improvements",
+    "date": "2026-11-03",
+    "url": "https://huggingface.co/papers/2611.03126",
+    "file": "CUA-Master.md"
+  },
+  {
+    "id": "hf-robot-use",
+    "source": "Hugging Face Papers",
+    "title": "Democratizing Robot-Use Agents: A Unified Harness with Open Models",
+    "date": "2026-11-03",
+    "url": "https://huggingface.co/papers/2611.01560",
+    "file": "Robot-Use Agents.md"
+  },
+  {
+    "id": "hf-swe-trail",
+    "source": "Hugging Face Papers",
+    "title": "History-Guided Trajectory Collection for Coding Agent Training",
+    "date": "2026-11-03",
+    "url": "https://huggingface.co/papers/2611.02074",
+    "file": "SWE-Trail.md"
+  },
+  {
+    "id": "hf-leanguard",
+    "source": "Hugging Face Papers",
+    "title": "Lean-Verified Guardrails for Tool-Using Agents",
+    "date": "2026-11-03",
+    "url": "https://huggingface.co/papers/2611.02332",
+    "file": "LEANGUARD.md"
+  },
+  {
+    "id": "hf-teammates",
+    "source": "Hugging Face Papers",
+    "title": "Measuring AI Agents as Teammates with Collaborative Intelligence",
+    "date": "2026-11-03",
+    "url": "https://huggingface.co/papers/2611.02633",
+    "file": "Agents as Teammates.md"
+  },
+  {
+    "id": "hf-maserve",
+    "source": "Hugging Face Papers",
+    "title": "Benchmarking Multi-Agent LLM Serving Systems",
+    "date": "2026-11-03",
+    "url": "https://huggingface.co/papers/2610.40293",
+    "file": "MAServeBench.md"
+  },
+  {
+    "id": "hf-avatar",
+    "source": "Hugging Face Papers",
+    "title": "Amplifying Human Agency Through Persistent Personal Agents",
+    "date": "2026-11-03",
+    "url": "https://huggingface.co/papers/2611.03092",
+    "file": "Avatar Intelligence.md"
+  },
+  {
+    "id": "hf-crossswe",
+    "source": "Hugging Face Papers",
+    "title": "Benchmarking Cross-Repository Joint Development for Coding Agents",
+    "date": "2026-11-03",
+    "url": "https://huggingface.co/papers/2611.01484",
+    "file": "CrossSWE.md"
+  },
+  {
+    "id": "hf-continual",
+    "source": "Hugging Face Papers",
+    "title": "Can Coding Agents Sustain Continual Evolution without Forgetting?",
+    "date": "2026-11-03",
+    "url": "https://huggingface.co/papers/2611.03219",
+    "file": "Coding Agents Continual Evolution.md"
+  }
+]
