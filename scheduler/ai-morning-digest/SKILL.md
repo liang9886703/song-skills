@@ -1,124 +1,162 @@
 ---
 name: ai-morning-digest
 description: >-
-  跑 AI 信息晨报/日报：读《优秀 AI 信息源》（跳过 AIHOT），按各源「最近一天」抓取，按信息源分组，去重近三天，白名单与条数上限，三栏
-  HTML（左文件树/中单篇/右当前篇大纲）输出到 <STORAGE>/daily/YYYY-MM-DD/ 并对话通知。定时任务触发时也用。
+  制作 AI 信息晨报：重读《优秀 AI 信息源》（跳过 AIHOT），按各源最近发布日选材，去重近三天；文章保留导读与原文主干，项目直接使用 taste-project。按信息源组织三栏阅读页，验证并交付当期日报。定时任务触发时也用。
 metadata:
   storageRoot: 由部署方配置，默认 /home/box/data/ai-digest
-  provenanceFile: SOURCE.md
+  provenanceFile: SKILL.md
   layout: source-file-tree
-  updatedAt: 2026-11-04T05:20:00.000Z
+  updatedAt: 2026-11-09
 ---
 # AI 晨报（信息源日报）
 
-## 文件
+本文件集中维护执行规则、名单、调度与交接说明、来源记录。用户当次要求与已保存定时任务中的较新要求优先；合并文档不改变实际任务的时间、权限或投递位置。
 
-本 skill 自包含，不依赖其他 skill。
+## 1 入口与依赖
 
-| 路径 | 作用 |
+用户要求制作 AI 晨报或定时任务触发时使用。每次重读 Google Doc [《优秀 AI 信息源》](https://docs.google.com/document/d/1cbzQ5e92UxDC75cdemcvUs1Q7SpOZ97htfLb5s0mTSU/edit)，**跳过 AIHOT**。信息源增删以该文档为准，不在多个文件重复维护。
+
+| 路径 | 用途 |
 | --- | --- |
-| `reference/article-summary.md` | 每篇 md 怎么写：导读 + 命中框架的正文，保留主干、标题优先原文、不联网补背景 |
-| `reference/repo-analysis.md` | 仓库类条目怎么深入分析；`report_dir` 指向当日 `intermediate/repos/<owner-repo>/`，配套 `reference/repo-analysis/` 下的约束文档 |
-| `templates/report.html` + `templates/FILL.md` + `templates/check_report.py` | 固定三栏 HTML 壳（左文件树 / 中单篇 / 右当前篇大纲）、填法、填完自检 |
-| `whitelist.md`、`blacklist.md` | Trending / HF 的收录名单 |
-| `examples/` | 一份真成品 HTML、候选清单、fill-notes |
-| `SOURCE.md` | 来源与打包改动记录 |
+| 本文件 | 流程、选材名单、质量要求、定时交接、来源 |
+| [reference/article-summary.md](reference/article-summary.md) | 非仓库文章的写法：保留原文主干，不凑框架 |
+| [taste-project](../../skills/research/taste-project/SKILL.md) | 项目分析的唯一入口；按其路由读取对应 reference，不能用摘要模板替代 |
+| [templates/FILL.md](templates/FILL.md)、`templates/report.html`、`templates/check_report.py` | 三栏阅读页、填法与结构检查 |
+| [examples/](examples/) | 历史成品和候选清单示例，不覆盖较新的用户要求 |
 
-`bro`（去 AI 味）是可选的通用能力，环境里有就用，没有不影响本 skill 成立；用了只做最后一遍语感。
+项目分析不再维护包内的 taste-project 副本。调度包与 `skills/research/taste-project/` 必须一起可读；目录缺失时只读恢复仓库里的相应目录，不执行仓库脚本或安装软件。若必须在其他目录加载，明确传入 taste-project 的实际位置，不把旧副本当作当前规范。
 
-## 何时使用
+本目录放在 `scheduler/` 是因为它是定时任务交接包，不参与 skillshare 的普通技能同步；`skills/` 才是常规技能同步源。不要为分发本任务而复制并长期维护另一套项目分析规范。
 
-用户要求跑 AI 信息晨报/日报，或定时 routine 触发。每次重读 Google Doc《优秀 AI 信息源》`https://docs.google.com/document/d/1cbzQ5e92UxDC75cdemcvUs1Q7SpOZ97htfLb5s0mTSU/edit`，**跳过 AIHOT**。
+## 2 存储与产物
 
-## 存储
+日期以 **Asia/Shanghai** 为准。`<STORAGE>` 由部署方配置，默认 `/home/box/data/ai-digest`；换机器只改根目录。
 
-时区 **Asia/Shanghai**。`<STORAGE>` 由部署方配置，默认 `/home/box/data/ai-digest`；换机器只改这一个根，其余都是相对路径。交接、部署与已知脆弱点见 `HANDOFF.md`，定时定义见 `routine.md`。
-
-```
+```text
 <STORAGE>/daily/YYYY-MM-DD/
-├── report.html              成品，单文件，内联全部 CSS/JS/正文
-├── seen.json                近三天去重：{date, timezone, items[{url, source, title, date}]}
-├── articles/<源>/<篇名>.md   单篇源文件，HTML 正文的来源
+├── report.html              当期阅读页，内联 CSS、JS 与正文
+├── seen.json                去重记录：date、timezone、items（url/source/title/date）
+├── articles/<源>/<篇名>.md   正文来源，一篇文章一个文件
 └── intermediate/
-    ├── candidates.json      低档产出、高档输入（唯一交接物）
-    ├── items.json           最终收录清单，填 HTML 时按它生成文件树
-    ├── sources/<源>/        抓下来的原始列表页 / 正文
-    ├── repos/<owner-repo>/  仓库深入报告
-    ├── lenny/               当日 Lenny 邮件正文
-    └── fill-notes/notes.md  收了什么、省了谁、哪路失败
+    ├── candidates.json      候选与原文、来源时间、获取限制
+    ├── items.json           最终收录内容
+    ├── sources/<源>/        原始列表页与正文
+    ├── repos/<owner-repo>/  taste-project 报告与证据记录
+    ├── lenny/               当日相关邮件正文
+    └── fill-notes/notes.md  收录、省略、获取失败及原因
 ```
 
-## 「最近一天」
+项目报告明确输出到当期 `intermediate/repos/<owner-repo>/`，这是本任务传给 taste-project 的输出路径，不改动该 skill 的默认目录规则。用于网页的项目正文必须保留报告的完整适用结构，不能另写几段概括来替代报告。可按当前交付要求将 Markdown 正确渲染到当期 Site。
 
-该源最新已发布内容的发布日；今日无则取昨天等。约一个月无更新则**整源省略**。GitHub Trending：Daily、不限语言（当日快照）。
+按信息源分组，不改成资讯/技术/思考分类。左栏为信息源文件夹与每篇文章节点，根级 `今日.md` 是总览；简略内容与项目分析放在同一篇，不拆成两个阅读文件。右栏只显示当前篇大纲。此次合并的是调度说明文档，不把不同主题的日报文章合并。
 
-## 上限
+## 3 选材、名单与去重
 
-| 对象 | 规则 |
+### 3.1 最近一天与数量
+
+“最近一天”指该信息源最新已发布内容的发布日，不必等于今天；约一个月没有更新的整源省略。GitHub Trending 使用 Daily、不限语言的当日快照。榜单无法取得时报告实际限制，其他发现入口不能伪称完整当日榜单；研究首发日期、收录日期、核验日期分开写，不把旧资料冒充当天发布。
+
+| 对象 | 上限与优先级 |
 | --- | --- |
-| 博客 + 仓库合计 | ≤ 20；白名单优先，再按与 Agent runtime / 会话编排 / 沙箱 / 权限 / 评测 / 模型服务相关度 |
-| HF Papers | 白名单；最多 10；只简写；降权纯层训练细节 |
-| Trending | 见 `whitelist.md` / `blacklist.md`；名单外按相关度极简必收、不深入 |
+| 博客与仓库合计 | 最多 20 篇，优先白名单与 Agent runtime、会话编排、沙箱、权限、评测、模型服务有关的内容 |
+| HF Papers | 最多 10 篇，优先白名单；阅读原论文后简洁呈现，降权纯模型层训练细节 |
+| GitHub 项目 | 按白名单和相关度选材；所有入选项目均直接按 taste-project，不因名单外而降成自创简报 |
 
-## 组织（按信息源）
+### 3.2 白名单与黑名单
 
-报告按**信息源**分组，不分资讯/技术/思考。
+匹配不区分大小写，标题、描述、topics 或 README 首段命中任一即可：
 
-左栏文件树：源文件夹 → 每篇文章一个 `.md` 节点（另有根级 `今日.md` 索引）。点文件只打开那一篇。
+AI、人工智能、agent、agents、LLM、GPT、Claude、Gemini、提示词、prompt、prompts、skill、skills、工作流、workflow、coding agent、个人工作流、RAG、MCP、tool use、function calling、sandbox、评测、eval、agent runtime、orchestration。
 
-一篇文章一个节点，简略与深入**同一篇**，不拆两个文件。右栏只放当前篇的大纲。
+明确降权：纯模型层训练细节、逐层训练、仅 loss 或数据配比且没有系统、产品或工作流含义的内容，除非与上述方向有强相关。
 
-## 成本路由（按任务分档）
+GitHub 仓库黑名单目前为空；后续明确加入的项目整仓不收录。名单统一在本节维护。
 
-| 环节 | 档 | 为什么 |
+### 3.3 去重与邮件
+
+对照近三天 `seen.json`，按 URL 或“源＋标题＋日期”去重，同源同一事件合并。记录缺失时尽力从近三天成品恢复；无法恢复就说明覆盖缺口。
+
+必查当日 Lenny's Newsletter 相关实际邮件，不能把搜索摘要当作完整正文。仅整理取得的文字，未读逐字稿或未听音频时不声称完成。没有新邮件如实记录，不重复收录旧文凑数。
+
+## 4 写作与项目分析
+
+### 4.1 非仓库文章
+
+阅读 [article-summary](reference/article-summary.md)，保留导读与原文主干。导读先用具体语言说明领域、要改变的对象和问题；产品、合作或区域上线新闻交代实际变化与目的，不硬造技术问题或收益。目标不等于已经实现的效果。
+
+正文只展开原文支持的内容，按叙事自然分标题，不机械套背景/机制/结果/启示。论文标题和小标题要直接呈现有证据的问题、验证、结论或技术贡献，不用“机制、结果与边界”等空泛栏目。尽力读原论文相关正文、结果、讨论与局限，区分观察、解释、假说和编辑推论；未读到的正文或未验证的边界明示。略去无关步骤和参数，保留理解结论所需的场景与限制。
+
+每篇保留原文链接，不以“本文介绍了”开头，不逐个复述例子，不替作者补未说明的评价。正文中文、每篇不超过 4000 中文字，具体用户要求优先。`bro` 可选且只做最后一遍语感，不得削弱技术判断。
+
+模型发布新闻在导读后依次说明：发布与使用情况（灰度/全量、时间、平台）、主打能力、其他官方重点；未公布的内容明确标注。
+
+### 4.2 项目直接使用 taste-project
+
+每个入选项目必须先读 [taste-project/SKILL.md](../../skills/research/taste-project/SKILL.md)，再按其路由读取对应约束。日报默认是“初步了解整个项目仓库”，完整使用其 [初识项目仓库](../../skills/research/taste-project/reference/first-understand-project-repository.md) 要求；用户明确改为单能力或深入分析时再选相应分支。
+
+不自行另定轻量版结构，不把“用了 taste-project”理解为只参考几个词。项目地址、分析基线、背景、解决的问题、名词表、场景、用户故事、运行方式、整体链路、仓库信息、完成度与近期迭代等必须内容，以该 skill 当前原文为准；标题编号、表格、图和证据表达同样遵循原文。
+
+按 skill 规定核验当前实现、入口与测试，区分文档声明、源码判断和本次运行结果；PR 取样遵循其“近一个月内最多 10 个已合并 PR”口径，分析实际改动，不用一个 PR 或标题列表替代。证据不足就写清缺口，不推断功能不存在。本任务默认只读，不安装、运行项目代码或复现实验。
+
+项目研究允许按需继续读取源码、文档、PR 与外部材料，不能被文章摘要阶段“不要重新抓取”的规则阻断。信息获取方式遵循 taste-project，不额外固化为一套探索流程。
+
+## 5 执行与质量检查
+
+将机械整理与内容判断分开，避免抓取、写作、排版互相干扰；模型档位遵循执行环境允许的配置，不为降低成本削减必要研究。
+
+| 阶段 | 输入 | 产出 |
 | --- | --- | --- |
-| 读清单、抓取、列表解析、去重、选条、写 `seen.json` | 低 | 判定标准已写死，机械活 |
-| 填 `report.html`（替换占位符、生成文件树与大纲） | 低 | 模板已定，只做替换 |
-| 导读 + 正文（`reference/article-summary.md`） | 高 | 全报告唯一的质量来源，需要读懂主干、判断取舍 |
-| 仓库深入（`reference/repo-analysis.md`） | 高 | 要读代码、下结论 |
+| 抓取与筛选 | 源清单、近三天记录 | 含实际原文与失败原因的 candidates.json |
+| 写作与项目研究 | 候选原文；项目另加载 taste-project | articles 与项目报告，证据范围明确 |
+| 排版与校验 | 正文和 items.json | report.html、检查结果、seen.json |
 
-分派要求：
+普通文章写作以已取得原文为基础，不联网编造背景；缺失关键原文时回到获取环节或说明限制。项目研究按上一节补齐证据。写作者不同时修改 HTML、去重或 seen；填装者不重新压缩项目报告或改写结论。来源失败在候选与总览记录，不能被解释成“今天没有新闻”。
 
-1. **一次执行只做一类事**。抓取阶段一个低档执行，产出 `intermediate/candidates.json`（源、标题、链接、发布时间、原文正文）；写作阶段一个高档执行，输入只有这份候选清单 + 原文，**不要让它重新抓取**。
-2. 高档执行只写正文（每篇 md 的正文内容），不碰 HTML、不去重、不写 seen。
-3. 抓取失败或列表偏薄的源，在候选清单里标 `fail: <原因>`，不占用高档执行的时间。
+采用 2026-11-05 晨报的三栏样式：左文件树、中间单篇正文、右侧当前篇大纲，浅灰侧栏、白色正文和紫色操作卡。术语在正文里以点状下划线标识，点击后在附近展示可关闭的简短浮窗，兼容键盘和触屏；不要另设独立术语栏或文末集中解释区。taste-project 要求的名词表仍保留，两者用途不同。手机用可开关抽屉承载文件树与大纲，保留 Codex 和复制功能。旧模板的四个占位为 `TITLE`、`LEFT_TREE`、`DOCS`、`OUTLINES`，填法见 [FILL.md](templates/FILL.md)。成品的文件树、正文、大纲 `data-doc` 一致，文章锚点为 `#doc-<id>`。引用、项目地址、原文链接必须可点击，不能留下未处理的 Markdown 链接。
 
-## 写作
+模板附带 `check_report.py` 的用途是检查占位、ID 与锚点；只有运行环境和用户权限允许时才执行脚本，本任务不因仓库存在脚本就自行运行。也可用受支持的独立静态检查与浏览器检查完成验证。
 
-每篇按 `reference/article-summary.md` 写，动笔前读一遍。三条最容易破的：
+移动布局、术语弹窗、复制正文与引用、Codex 追问和项目分析入口等遵循已保存任务的完整要求，不因合并文档删除。尽力检查 320–440 CSS 像素、横屏、长标题与表格溢出、切换、大纲、弹窗及复制失败备选；分别说明网页测试、实体设备测试和本机 Codex 测试的实际范围。
 
-- 导读说清这篇在谈什么话题，读者据此判断值不值得细看。
-- 只写文章里实际有的东西，没有背景就不写背景，不联网补，不替作者补他没写的代价。
-- 保留主干略去细节：例子写它在证明什么，不逐个复述。
+## 6 调度与交接
 
-不合格的典型：「本文介绍了…」开头、通篇名词要点、凑齐框架而写了原文没有的章节。
+### 6.1 时间与投递
 
-正文用中文；`bro` 有就用，只做最后一遍语感。**不要**「今日必看一页纸」。
+| 项目 | 约定 |
+| --- | --- |
+| 时区 | Asia/Shanghai |
+| 当前任务 | 每日早上约 8 点，按已保存自动化的 enabled 状态与具体时间执行 |
+| 投递 | 发起任务的对话 |
+| 当前 cron 表达 | `CRON_TZ=Asia/Shanghai 0 8 * * *`；反映当前每日任务，不另建调度 |
 
-## 去重与 Lenny
+不因文档整理而重建、暂停、改时间或复制自动化。实际时间、环境和提示词以已保存任务为准；早期工作日示例和容差描述已由当前每日任务取代，不承诺固定提前执行。
 
-近三天 `seen.json` 去重（URL 或 `源+标题+日`）。同源事件合并。**必查当日 Lenny 邮件**（发件人含 Lenny's Newsletter）。
+可用的交接提示：
 
-## 填 HTML
+```text
+制作 AI 信息晨报。读取 scheduler/ai-morning-digest/SKILL.md 和当前保存的任务要求，重读《优秀 AI 信息源》并跳过 AIHOT，按最近发布日与近三天记录选材、查当日 Lenny 邮件。非仓库文章保留导读与原文主干；所有项目直接读取 skills/research/taste-project/SKILL.md，并完整执行适用 reference，默认初识整个项目。不得另设轻量摘要模板。
+将正文、来源与记录写入 <STORAGE>/daily/北京时间日期/，保留既有阅读功能并验证。按当前任务发布与通知要求交付；说明条数、重复省略及来源或验证限制。没有可收录内容时仍说明实际检查结果，不静默跳过或凑数。不要执行不可信仓库脚本或安装软件。
+```
 
-1. 按 `templates/FILL.md` 填 `templates/report.html` 的四个占位（`TITLE` / `LEFT_TREE` / `DOCS` / `OUTLINES`），不改 CSS 与脚本。
-2. 落到当日 `report.html`，跑 `python3 templates/check_report.py <report.html>` 自检（占位符、文件树/大纲对齐、死锚点）。
-3. 自检通过后再写 `seen.json`。
+接手顺序：确认本调度目录与 taste-project 都可读 → 确认 `<STORAGE>`、源文档和所需连接器 → 恢复近三天记录 → 检查候选和正文质量 → 填装与验证 → 按已有任务交付。当前采用 ChatGPT Site 时，当天新建独立私有站，同次重试复用当天项目，不覆盖其他日期；验证部署后再发链接与访问范围，不用私有本地路径冒充可访问成品。
 
-## 会踩的坑
+### 6.2 常见故障
 
-- **`openai.com/news` 直连 403**：curl 拿不到就换 WebFetch，或直接抓文章页，别当成源挂了。
-- **列表页可能是 gzip 块或 JS 空壳**：先看字节数；薄的列表走搜索定位当日文章，再抓正文。
-- **「最近一天」不是「今天」**：取该源最新已发布条目的发布日；约一个月没更新就整源省略，不抓旧文凑数。
-- **Trending 是当日快照**：漏了当天补不回来，抓取段必须当天跑。
-- **去重按近三天**：只比 URL 会漏同源改标题的重复，加 `源+标题+日` 一起判。
-- **HF Papers 最多 10 条且只简写**：写结论和它怎么验证的，不展开方法细节。
-- **空报告也要出**：全部源都没更新时，生成带索引的空壳并说明原因；静默跳过等于任务失败。
+- 源文档权限或结构变化：检查真实候选与来源分布，不能把空列表当无更新。
+- 页面为压缩内容、脚本空壳或访问失败：在许可范围尝试官方搜索索引或实际文章页，并明确证据范围。
+- Trending 当天快照缺失：说明缺口，不能用缓存补齐后宣称完整当天榜单。
+- 项目证据不足：保留 skill 必须说明的部分并标注未知，不退回几个泛泛要点。
+- 发布或交互验证失败：报告实际完成部分，不声称成功；权限变更需单独遵循用户授权。
 
-## 交付
+## 7 来源与维护记录
 
-对话通知用户；附上当日报告（`file://<STORAGE>/daily/YYYY-MM-DD/report.html`）与条数、省略的源、失败的源。
+| 内容 | 来源 |
+| --- | --- |
+| 规则与名单 | 用户自建（nazuna）；创建于 2026-11-03T22:45:00+08:00，首次打包于 2026-11-04；以后以用户最新要求为准 |
+| 信息源清单 | 上述 Google Doc；改源只维护原文档 |
+| article-summary | nazuna 于 2026-11-03 编写；来源与写作纠正保留在该 reference 末尾 |
+| 项目分析 | [song-skills 的 taste-project](../../skills/research/taste-project/SKILL.md)，直接使用当前版本，不维护复制品 |
+| 模板与名单 | 个人编写；模板提供三栏与响应式阅读布局 |
+| 示例 | 2026-11-04 真实成品，仅作版式参考 |
 
-## 流程
-
-读清单 → 建目录 → 读 seen →【低档】抓取 + Lenny + 裁剪 + 去重 → `candidates.json` →【高档】导读+正文（仓：`reference/repo-analysis.md` + `report_dir`）→【低档】填 HTML + 写 seen → 通知。
+2026-11-04 曾将 article-summary 合入 reference，并将 taste-project 的 `cf09a07` 版本复制为 repo-analysis；同时将存储根改为可配置、加入结构检查脚本。2026-11-09 按用户要求将 HANDOFF、SOURCE、sources、routine、whitelist、blacklist 六份短文件合并至本文件，删除旧项目分析副本，恢复直接引用 taste-project；同时修复入口与模板说明。历史内容可从 Git 提交恢复，不将旧副本当现行规范。
