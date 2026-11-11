@@ -38,3 +38,4 @@
 | `codebase-to-tutorial` | [The-Pocket/PocketFlow-Tutorial-Codebase-Knowledge](https://github.com/The-Pocket/PocketFlow-Tutorial-Codebase-Knowledge) | 个人技能封装的上游程序，不是官方 skill；内置源码版本见 `assets/upstream/source.json`，保留本地模型调用封装。 |
 | `my-repo-story` | 个人编写 | 多代码仓库自动化安全拉取、24小时变更分析与技术演进复盘技能；支持本地冲突保护与 macOS launchd 定时调度。 |
 | `agent-skill-verification` | 本地编写 | 用软链接共享源码，验证目录的 `.agents` 由用户自行配置。 |
+| `personal-vault` | 个人编写 | 个人数字资产库与知识沉淀，数据存放在技能内部 data/ 目录。 |

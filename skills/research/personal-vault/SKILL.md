@@ -1,9 +1,9 @@
 ---
-name: project-pool
-description: 个人项目池与技术知识库管理。支持检索、查看或追加开源项目、Agent 论文、AI 信息源、技术笔记与需求画像数据。触发词：记一下、记录项目、收藏项目、收藏论文、添加信息源、查项目池、项目池、project-pool、查论文收藏、需求画像。
+name: personal-vault
+description: 个人数字资产库与知识沉淀。支持检索、查看或追加开源项目、Agent 论文、AI 信息源、技术笔记与需求画像等数据。触发词：记一下、记录项目、收藏项目、收藏论文、添加信息源、查知识库、查收藏、personal-vault、查论文、需求画像。
 ---
 
-# 个人项目池与知识库 (Project Pool)
+# 个人数字资产库 (Personal Vault)
 
 本 Skill 用于统一维护和查询个人的开源项目、前沿论文、信息源与技术洞察。所有结构化数据作为本 Skill 内部资产，集中存储于本 Skill 目录下的 `data/` 文件夹中。
 

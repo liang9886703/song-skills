@@ -114,7 +114,7 @@
 | [`hv-analysis`](research/hv-analysis/SKILL.md) | 横纵分析法（Horizontal-Vertical Analysis）深度研究Skill。由数字生命卡兹克提出，融合了索绪尔的历时-共时分析、社会科学的纵向-横截面研究设计、商学院案例研究法与竞争战略… |
 | [`khazix-writer`](research/khazix-writer/SKILL.md) | 数字生命卡兹克（Khazix）的公众号长文写作skill。当用户需要撰写公众号文章、写稿子、续写文章、根据素材产出长文时使用。触发词包括但不限于：写文章、写稿子、帮我写、续写、扩写、公众号文章、长文、… |
 | [`my-repo-story`](research/my-repo-story/SKILL.md) | 多代码仓库自动化安全拉取、24小时变更分析与技术演进故事复盘技能。提供核心约束、位置规范与叙事要求，由高级模型自主完成多仓库状态排查、冲突防护、提交考古与演进复盘。 |
-| [`project-pool`](research/project-pool/SKILL.md) | 个人项目池与技术知识库管理：统一检索与追加开源项目、Agent 论文、AI 信息源、技术笔记与需求画像，数据存放在 data/ 目录。 |
+| [`personal-vault`](research/personal-vault/SKILL.md) | 个人数字资产库与知识沉淀：统一检索与追加开源项目、Agent 论文、AI 信息源、技术笔记与需求画像，数据存放在 data/ 目录。 |
 | [`repo-story-time`](research/repo-story-time/SKILL.md) | Generate a comprehensive repository summary and narrative story from commit history |
 | [`taste-project`](research/taste-project/SKILL.md) | 阅读代码仓库并按约束产出分析报告。用户想初步了解一个项目仓库、或想深入了解仓库里的某一个子能力时使用；用户只丢来一个仓库链接或目录、没说具体要什么时也用本 skill。 |
 
