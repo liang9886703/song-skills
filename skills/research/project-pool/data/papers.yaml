@@ -1,0 +1,17 @@
+- title: GitHub Spec Kit
+  url: https://github.com/github/spec-kit
+  category: Agent 任务执行优化
+  purpose: 复杂任务里，AI 容易把局部代码写出来，却遗漏、误解或逐渐偏离最初的需求。
+  core_content: 一是每个阶段都生成下一阶段必须读取的文件，不同层次的决策分开；二是把任务变成可以追踪的执行单元，目标是逐步交付可独立验证的功能；三是加入从实现回到规格的检查。
+
+- title: Is Your Long-Horizon Benchmark Really Deep? Measuring and Synthesizing Depth in Terminal Tasks
+  url: https://arxiv.org/abs/2611.01927
+  category: Agent 训练任务和评测题的生成方法
+  purpose: 怎样自动生成真正需要持续观察、判断和调整的任务，并验证它们确实有这种要求？
+  core_content: 提出深度指标识别高轮数执行题；通过真实环境探索构造依赖的多阶段任务；用这些题区分模型能力并训练轨迹检查迁移收益。
+
+- title: "ToolSpace: Scaling Tool-Centric Environment Synthesis for Long-Horizon Agents"
+  url: https://huggingface.co/papers/2611.05036
+  category: Agent 训练任务和评测题的生成方法
+  purpose: 要让 Agent 做好长任务，需要规模化生产“工具之间有真实依赖、能够执行、能够验收”的训练任务。
+  core_content: 过去先造数据库与场景再生成工具与任务；作者反过来：调用日志 → 工具依赖图 → 探索可执行工作流 → 反向生成用户需求 → 重放验收 → 用于训练。

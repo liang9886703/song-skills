@@ -1,0 +1,19 @@
+- name: agent-desktop
+  url: https://github.com/vercel-labs/agent-desktop
+  tags:
+    - AI
+    - Computer Use
+    - CLI
+    - 自动化
+  desc: Vercel Labs 出品的跨平台桌面端 Computer Use CLI 与 C 库；直接读取系统无障碍树（AX/UI Automation/AT-SPI）生成元素 ref 进行交互，无需截图与像素匹配，原生支持 MCP。
+  created_at: "2026-11-04"
+
+- name: Heretic
+  url: https://github.com/p-e-w/heretic
+  tags:
+    - AI
+    - 模型修改
+    - 减负
+    - 去审查
+  desc: 无需训练的语言模型修改工具，可用于移除大模型审查（Abliteration）、抑制无用废话以及减少谄媚等行为。
+  created_at: "2026-11-03"

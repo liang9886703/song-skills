@@ -1,0 +1,143 @@
+- name: Simon Willison's Weblog
+  url: https://simonwillison.net/
+  type: 技术博客
+  tags:
+    - AI 应用实践
+    - 编程实践
+  desc: 聚焦于软件开发、AI 技术应用（如大模型、LLM 开发与工具）及编程实践的个人深度技术博客。
+
+- name: Shlok Khemani
+  url: https://www.shloked.com/
+  type: 个人技术博客
+  tags:
+    - AI 内存系统
+    - 编程代理
+    - 人机交互
+  desc: 聚焦于人工智能、AI 代理、内存系统以及人机交互研究与构建的独立写作者与程序员博客。
+
+- name: OpenAI Developers Blog
+  url: https://developers.openai.com/blog
+  type: 官方技术博客
+  tags:
+    - OpenAI 动态
+    - 开发者工具
+    - API 最佳实践
+  desc: OpenAI 官方发布的开发者博客，聚焦于 API 更新、大模型特性解析、AI 代理构建及各类开发者工具的实战经验分享。
+
+- name: OpenAI News
+  url: https://openai.com/news
+  type: 官方新闻动态
+  tags:
+    - OpenAI 公司动态
+    - 重大发布
+    - 里程碑
+  desc: OpenAI 官方新闻发布中心，聚焦于公司重大战略发布、产品里程碑及行业政策公告。
+
+- name: Claude Resources & Articles
+  url: https://claude.com/resources/articles
+  type: 官方资源与文章
+  tags:
+    - Anthropic 动态
+    - AI 代理架构
+    - 产品更新
+  desc: Anthropic 官方发布的资源中心与文章页面，聚焦于 Claude 平台更新、AI 代理构建、企业级应用及前沿研究分享。
+
+- name: Anthropic News & Research
+  url: https://anthropic.com/news
+  type: 官方研究与新闻
+  tags:
+    - Anthropic 前沿研究
+    - 安全公告
+    - 公司动态
+  desc: Anthropic 官方新闻与研究页面，发布前沿大模型研究论文、安全政策公告及公司最新动态。
+
+- name: Google DeepMind Blog
+  url: https://deepmind.google/blog/
+  type: 官方研究博客
+  tags:
+    - Gemini 动态
+    - 前沿研究
+    - 科学探索
+  desc: Google DeepMind 官方发布的研究与技术博客，聚焦于 Gemini 模型的最新前沿进展、研究突破、多模态能力升级及科学探索。
+
+- name: Google Developers Blog
+  url: https://developers.googleblog.com/
+  type: 官方技术博客
+  tags:
+    - 开发者生态
+    - Gemini API
+    - 技术实践
+  desc: Google 官方开发者博客，分享包括 Gemini API、Google AI 工具链及各项前沿开发者技术的最新实践与更新。
+
+- name: Google Blog - Gemini
+  url: https://blog.google/products-and-platforms/products/gemini/
+  type: 官方产品动态
+  tags:
+    - Gemini 产品更新
+    - 生态集成
+    - AI 功能
+  desc: Google 官方产品博客中的 Gemini 专区，聚焦于 Gemini 消费端及企业级产品的最新功能发布与应用生态资讯。
+
+- name: GitHub Trending
+  url: https://github.com/trending
+  type: 开源趋势平台
+  tags:
+    - 开源项目趋势
+    - AI 智能体
+    - 前沿工具
+  desc: GitHub 热门趋势榜单，汇聚全球最受关注的开源项目、AI 代理框架及前沿技术工具。
+
+- name: Hugging Face Papers
+  url: https://huggingface.co/papers
+  type: 前沿论文追踪平台
+  tags:
+    - 每日前沿论文
+    - 社区热度排行
+    - 开源实现直达
+  desc: Hugging Face 官方前沿论文精选与讨论平台，每日按社区热度与关注度实时汇总、排行最新 AI/ML arXiv 论文，并提供论文讨论、开源代码与模型权重直达通道。
+
+- name: xAI Blog
+  url: https://x.ai/blog
+  type: 官方研究与技术博客
+  tags:
+    - Grok 架构
+    - 前沿研究突破
+    - 超算集群
+  desc: Elon Musk 旗下 xAI 官方博客，发布 Grok 系列大模型（Grok-2/3、多模态、推理能力）、前沿架构论文、超算基础设施及安全评估的官方权威研究动态。
+
+- name: AIHOT (一手源频道)
+  url: https://aihot.news/?channel=firstParty
+  type: 行业动态与资讯聚合
+  tags:
+    - 一手官方动态
+    - AI 行业资讯聚合
+    - 每日精选
+  desc: 聚焦各大 AI 厂商一手官方发布、技术更新与行业大事，并提供 AI 中文摘要与质量打分筛选。
+
+- name: Meta AI Blog
+  url: https://ai.meta.com/blog/
+  type: 官方研究与开源博客
+  tags:
+    - Llama 开源生态
+    - FAIR 前沿研究
+    - 具身智能与多模态
+  desc: Meta AI (FAIR) 官方博客，发布 Llama 系列开源大语言模型、前沿多模态视觉模型、具身智能及开放 AI 生态与底层研究论文的一手官方动态。
+
+- name: Lenny's Newsletter (Archive)
+  url: https://www.lennysnewsletter.com/archive?sort=new
+  type: 深度专栏 / 邮件通讯
+  tags:
+    - 产品构建
+    - AI 落地与增长
+    - 行业专访
+    - 每周邮件
+  desc: 硅谷顶流产品与增长 Newsletter（聚焦 AI 产品构建、商业化增长及行业实战访谈）。线上归档仅看公开免费内容；完整付费订阅已绑定个人邮箱（发件人：“Lenny's Newsletter”，每周二发送）。
+
+- name: Solo.io Blog
+  url: https://www.solo.io/blog
+  type: 官方技术博客
+  tags:
+    - Agent 基础设施
+    - MCP
+    - AI 网关
+  desc: Solo.io 官方博客。按最近发布日与相关度筛选实际文章，遵守近三天去重。

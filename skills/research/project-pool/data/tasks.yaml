@@ -1,0 +1,7 @@
+title: 个人任务分类与规划清单
+updated_at: "2026-11-02"
+weekly_plan:
+  - task: 完成个人信息获取定时任务的搭建
+    status: 未完成
+  - task: 看完线上 webagent 仓库的原理
+    status: 未完成
