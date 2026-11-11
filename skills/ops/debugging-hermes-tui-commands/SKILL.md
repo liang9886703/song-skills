@@ -8,7 +8,7 @@ platforms: [linux, macos, windows]
 metadata:
   hermes:
     tags: [debugging, hermes-agent, tui, slash-commands, typescript, python]
-    related_skills: [python-debugpy, node-inspect-debugger, systematic-debugging]
+    related_skills: [systematic-debugging]
 ---
 
 # Debugging Hermes TUI Slash Commands
@@ -115,8 +115,8 @@ If a command exists in the TUI but doesn't show in autocomplete:
 
 When surface-level inspection doesn't reveal the bug:
 
-- **Python side hangs or misbehaves:** use the `python-debugpy` skill to break inside `_SlashWorker.exec` or the command handler. `remote-pdb` set at the handler entry is the fastest path.
-- **Ink side not reacting:** use the `node-inspect-debugger` skill to break in `app.tsx`'s slash dispatch or the local command branch. `sb('dist/app.js', <line>)` after `npm run build`.
+- **Python side hangs or misbehaves:** set a Python debugger breakpoint inside `_SlashWorker.exec` or the command handler. `remote-pdb` set at the handler entry is the fastest path.
+- **Ink side not reacting:** attach the Node.js inspector and set a breakpoint in the slash dispatch or local command branch. Rebuild the TUI first if the compiled code is stale.
 - **Registry mismatch / unclear which side is wrong:** compare the canonical `COMMAND_REGISTRY` entry against the TUI's local command list side-by-side.
 
 ## Pitfalls
