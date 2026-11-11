@@ -6,7 +6,7 @@ metadata:
   storageRoot: 由部署方配置，默认 /home/box/data/ai-digest
   provenanceFile: SKILL.md
   layout: source-file-tree
-  updatedAt: 2026-11-10
+  updatedAt: 2026-11-11
 ---
 # AI 晨报（信息源日报）
 
@@ -197,3 +197,5 @@ GitHub 仓库黑名单目前为空；后续明确加入的项目整仓不收录�
 2026-11-04 曾将 article-summary 合入 reference，并将 taste-project 的 `cf09a07` 版本复制为 repo-analysis；同时将存储根改为可配置、加入结构检查脚本。2026-11-09 按用户要求将 HANDOFF、SOURCE、sources、routine、whitelist、blacklist 六份短文件合并至本文件，删除旧项目分析副本，恢复直接引用 taste-project；同时修复入口与模板说明。历史内容可从 Git 提交恢复，不将旧副本当现行规范。
 
 2026-11-10 同步当前日报的非项目文章基础规范、技术文章与论文专用写法，补齐标题下原文入口、Codex/复制和移动阅读要求，并消除模板填法中的旧摘要提示；加入用户指定的四类邮件源及去重要求；保留 taste-project、选材与实际调度，不固化过期的一次性选题。
+
+2026-11-11 按用户要求将 [Solo.io Blog](https://www.solo.io/blog) 加入《优秀 AI 信息源》及现有晨报自动化；作为常驻网页来源，继续按最近发布日、相关度与近三天去重规则检查实际文章，不把旧文当当天首发。网页源清单仍以 Google Doc 为准，不另建重复清单。
