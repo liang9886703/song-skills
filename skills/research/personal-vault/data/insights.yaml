@@ -4,3 +4,11 @@
     - 观点
     - AI
   date: "2026-11-03"
+- source_url: https://x.com/gippp69/status/2109235458383216811
+  insight: "Gipp（@gippp69）认为：定时任务累计成本应关注唤醒次数与无变化运行；能事件触发就不轮询；必须轮询则选择业务容忍的最慢频率，高频前置廉价变更检查；保留日志并定期清理长期无变化任务。每5分钟相比每小时是12倍运行次数，但不能断言实际费用或额度消耗必然12倍。文章《Grok Bot: A Routine Every 5 Minutes Costs 12x More Than Hourly (Full Course)》，文章页 https://x.com/i/article/2108906694768017408 。"
+  tags:
+    - 观点
+    - Grok Bot
+    - routines
+    - 成本
+  date: "2026-10-11"
