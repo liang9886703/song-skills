@@ -16,6 +16,7 @@ __pycache__/
 # Deployment-specific data and generated reader outputs
 **/deployment.local.json
 **/reader-config.local.json
+/scheduler/ai-morning-digest/data/
 /scheduler/ai-morning-digest/templates/articles.json
 /scheduler/ai-morning-digest/templates/history.json
 /scheduler/ai-morning-digest/templates/projects.json

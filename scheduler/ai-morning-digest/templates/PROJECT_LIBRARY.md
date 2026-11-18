@@ -4,8 +4,8 @@
 
 - 每日阅读器通过 `articles.json` 的 `project_library_url` 指向同一个已配置入口；未配置时隐藏按钮，不导航到示例或别人的站点。项目库站本身有 `projects.json` 时可显示本地入口。
 - 项目库是固定 Site 下的 `projects.html`，持续增量更新；每日正文仍是各自发布时的历史快照，不新建每日项目库。
-- 最新成功发布源码中的 `projects.json` 是恢复与合并基线。本地 `<STORAGE>/archive/projects.json` 是工作副本，不能仅从日报重建，避免丢失独立报告。
-- 项目以规范 GitHub owner/repo 为 key；每份报告使用稳定 key，保留完整 article、实际分析日期、来源及图。新增报告不覆盖历史报告，修订同一报告才原位更新。独立分析不可伪造日报归属。
+- 最新成功发布源码中的 `projects.json` 是恢复与合并基线。本地常驻 `<STORAGE>/projects.json`（或 `<STORAGE>/archive/projects.json`）是工作副本，不能仅从日报重建，避免丢失独立报告。
+- 项目以规范 GitHub owner/repo 为 key；每份报告使用稳定 key，保留完整 article、实际分析日期、来源及图。入选项目遵守近 1 个月（30天）去重原则，已分析项目 30 天内不重复分析收录，除非发生重大架构演进并在报告中明确新旧对比；新增报告不覆盖历史报告，修订同一报告才原位更新。独立分析不可伪造日报归属。
 - 入选项目完整遵守 taste-project。普通文章中的仓库引用不自动成为项目报告。
 - 日报成功发布后，如有真正项目报告，读取项目库最新源码与数据，按 key 去重合并，再实际发布。没有新增报告不必重发项目库。
 - 更新库时保留其原有 articles.json、history.json、正文和历史图，不用新日报替换旧日期内容。构建同时输出 index.html 与 projects.html。
