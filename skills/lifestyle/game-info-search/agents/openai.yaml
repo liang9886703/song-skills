@@ -1,0 +1,13 @@
+interface:
+  display_name: 游戏信息搜索
+  short_description: 搜索新游发售与定档、玩家真实上手反馈、媒体评测、攻略和开发幕后
+  default_prompt: 用 $game-info-search 查这款游戏最近的发售信息和玩家反馈，分别给出官方、玩家和媒体来源。
+  icon_small: assets/icon.svg
+  icon_large: assets/icon.svg
+policy:
+  products:
+  - chatgpt
+  - codex
+  - api
+  - atlas
+  allow_implicit_invocation: true

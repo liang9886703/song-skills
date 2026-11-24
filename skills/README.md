@@ -10,7 +10,7 @@
 
 - [电脑运维 (ops)（20）](#ops)
 - [程序开发 (dev)（46）](#dev)
-- [生活管理相关 (lifestyle)（3）](#lifestyle)
+- [生活管理相关 (lifestyle)（4）](#lifestyle)
 - [调研报告类 (research)（10）](#research)
 
 ---
@@ -100,6 +100,7 @@
 |-------|------|
 | [`cat-care`](lifestyle/cat-care/SKILL.md) | - Playing with curtains: exploration/hunting/climbing impulse; prioritize physical prevention (tie/clip curtains up, sec |
 | [`daily-report-writer`](lifestyle/daily-report-writer/SKILL.md) | Write or update a Chinese daily work report from ~/daily/YYYY/MM/DD.md and coding-agent conversations. Use  |
+| [`game-info-search`](lifestyle/game-info-search/SKILL.md) | 从已验证的公开网页、RSS 与 Steam API 搜索新游发售、玩家评价、媒体评测、攻略及开发幕后。 |
 | [`gamer-news`](lifestyle/gamer-news/SKILL.md) | Fetch and summarize the latest video game news from major gaming outlets (IGN, Kotaku, GameSpot, Polygon, Eurogamer, Rock Paper Shotgun, VG247, Gematsu, PlaySta |
 
 <a id="research"></a>
