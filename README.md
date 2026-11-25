@@ -24,6 +24,10 @@
 
 `scheduler/` 放整包交接的定时任务（skill + 运行说明），不参与技能同步，入口见 [`scheduler/README.md`](scheduler/README.md)。
 
+## Bot 专用技能
+
+`bot/` 放只绑定单个 Bot 的技能，不参与 `skills/` 的 skillshare 同步，也不是定时任务。入口见 [`bot/README.md`](bot/README.md)。文件进入仓库不会安装或启用该技能。
+
 ## 技能出处
 
 以下列出有明确依据的技能出处；未列出的技能来源待确认。安装或更新技能时同步维护来源链接、改编关系和更新注意事项，采用的上游版本记录在对应技能的来源文件中。
@@ -39,3 +43,4 @@
 | `my-repo-story` | 个人编写 | 多代码仓库自动化安全拉取、24小时变更分析与技术演进复盘技能；支持本地冲突保护与 macOS launchd 定时调度。 |
 | `agent-skill-verification` | 本地编写 | 用软链接共享源码，验证目录的 `.agents` 由用户自行配置。 |
 | `personal-vault` | 个人编写 | 个人数字资产库与知识沉淀，数据存放在技能内部 data/ 目录。 |
+| `last30days-ticket-archive` | 个人编写 | 只绑定 last30days Bot，放在 `bot/`，不参与 skillshare 同步。仓库中的副本尚未安装或启用。 |

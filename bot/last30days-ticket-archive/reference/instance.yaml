@@ -1,0 +1,79 @@
+# last30days 话题归档的实例配置。
+# 给人读的对照说明见 destination.md。两处不一致时停止，不要挑一处继续写。
+# 每次写入前仍要重新读取 Notion 实时 schema。本文件不能代替那一次读取。
+# 所有者于 2026-11-25 确认了下列属性名，并确认当时话题库是 0 行。
+# 月视图是否在界面上按月分组，截至该日没有做过视觉核验。
+
+bot:
+  id: 41abf589-9a81-42df-a156-af345dd36299
+  name: last30days
+  scope: this-bot-only
+
+timezone: Asia/Shanghai
+
+notion:
+  workspace_rule: same-workspace-as-this-data-source
+  homepage:
+    title: 千奇百问
+    url: https://app.notion.com/p/42368330c248815ba591e8ccead29edb
+    page_id: 42368330-c248-815b-a591-e8ccead29edb
+    role: surface-only-do-not-write
+  database:
+    title: 千奇百问 · 话题库
+    url: https://app.notion.com/p/42368330c248816ab771d2af951bbf8d
+    database_id: 42368330-c248-816a-b771-d2af951bbf8d
+  data_source:
+    url: collection://42368330-c248-8147-aa2e-000bfcc2afc0
+    id: 42368330-c248-8147-aa2e-000bfcc2afc0
+    role: parent-for-ticket-rows
+
+schema_snapshot:
+  confirmed_by_owner_on: 2026-11-25
+  row_count_at_confirmation: 0
+  monthly_grouping_visual: unverified
+  history_backfill: false
+
+properties:
+  title:
+    name: 话题
+    type: title
+    role: ticket-goal-title
+  initial_date:
+    name: 提问日期
+    type: date
+    role: set-on-create-only
+    month_source: true
+  last_updated:
+    name: 最后更新日期
+    type: date
+    role: successful-archive-date-asia-shanghai
+  answer_type:
+    name: 回答类型
+    type: select
+    options:
+      short: 短回答
+      long: 长回答
+  short_answer:
+    name: 简要回答
+    type: text
+    role: canonical-when-short-intro-when-long
+  month:
+    name: 月份
+    type: formula
+    writable: false
+    format: YYYY-MM
+    derived_from: 提问日期
+
+longform:
+  placement: row-page
+  separate_article: false
+  canonical_body: same-ticket-row-page
+  title_is_article_link: true
+  same_workspace: true
+
+behavior:
+  canvas: false
+  scheduled_polling: false
+  routine_migration: false
+  permission_changes: false
+  other_bot_histories: false
