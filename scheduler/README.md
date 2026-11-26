@@ -4,9 +4,7 @@
 
 ## AI 信息晨报
 
-统一入口：[ai-morning-digest/SKILL.md](ai-morning-digest/SKILL.md)。执行规则、选材名单、定时与交接说明、来源记录都在这一份文档，不再拆成多个短 Markdown 文件。
+统一入口：[ai-morning-digest/SKILL.md](ai-morning-digest/SKILL.md)。当前版本采用纯云端 Google Drive 工作流，通过 `digest-state` 管理时间指针、去重、项目库与失败回退，并按文档类型调度独立子代理。
 
-- 项目分析直接使用 [taste-project](../skills/research/taste-project/SKILL.md)；交接时确保该目录也可读，不复制维护第二套规则。
-- `ai-morning-digest/reference/` 保留非仓库文章写法。
-- `ai-morning-digest/templates/` 保留阅读页模板、填法与检查工具。
-- [examples/2026-11-04-report.html](ai-morning-digest/examples/2026-11-04-report.html) 是历史成品示例，不覆盖用户较新的要求。
+- Google Drive 文档、表格与文件夹 ID，以及完整的分阶段执行规则，统一以 `SKILL.md` 为准。
+- `ai-morning-digest/reference/`、`templates/` 与 [examples/2026-11-04-report.html](ai-morning-digest/examples/2026-11-04-report.html) 是旧版本地阅读页流程的历史兼容资产，不是当前云端流程的执行依赖。

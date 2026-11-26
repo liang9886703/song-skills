@@ -1,274 +1,71 @@
 ---
 name: ai-morning-digest
-description: >-
-  制作 AI 信息晨报：重读《优秀 AI 信息源》（跳过 AIHOT），以昨天与当天最新发布为准选材，去重近三天（项目近一月）；文章保留导读与原文主干，项目直接使用 taste-project。按信息源组织三栏阅读页，验证并交付当期日报。定时任务触发时也用。
-metadata:
-  storageRoot: 由部署方本地配置
-  provenanceFile: SKILL.md
-  layout: source-file-tree
-  updatedAt: 2026-11-18
+description: Build and deliver the daily AI morning digest in pure cloud Google Drive mode using a multi-stage sub-agent architecture. Use when the user asks to generate, run, or update the daily AI morning digest, AI news briefing, or scheduled morning report.
 ---
-# AI 晨报（信息源日报）
+# ai-morning-digest
 
-本文件集中维护执行规则、名单、调度与交接说明、来源记录。用户当次要求与已保存定时任务中的较新要求优先；合并文档不改变实际任务的时间、权限或投递位置。
+Produce and publish the daily AI morning digest entirely in Google Drive without relying on a local Mac, using a main orchestrator plus modular sub-agents split by document type.
 
-## 1 入口与依赖
+## When to Use
 
-用户要求制作 AI 晨报或定时任务触发时使用。先读取本目录未入库的 `deployment.local.json`（格式见 `deployment.example.json`）；配置缺失时从当前任务的已授权设置恢复，不猜测私有地址。每次重读 Google Doc 《优秀 AI 信息源》（地址从部署方的本地配置读取），**跳过 AIHOT**。原有网页信息源以该文档为准，不在多个文件重复维护；用户明确追加的邮件信息源统一列于第 3.3 节，作为源文档的补充。
+- The user asks to produce or refresh today's AI morning digest.
+- A daily scheduled task triggers the morning digest run.
+- A new document type with its own writing prompt needs to be added into the digest pipeline.
 
-| 路径 | 用途 |
-| --- | --- |
-| 本文件 | 流程、选材名单、质量要求、定时交接、来源 |
-| [reference/article-summary.md](reference/article-summary.md) | 非项目文章的基础规范，以及论文、技术文章各自的专用写法 |
-| [taste-project](../../skills/research/taste-project/SKILL.md) | 项目分析的唯一入口；按其路由读取对应 reference，不能用摘要模板替代 |
-| [templates/FILL.md](templates/FILL.md)、`templates/build_reader.py`、`templates/reader-shell.html` | 三栏阅读页、填法与结构检查 |
-| [examples/](examples/) | 历史成品和候选清单示例，不覆盖较新的用户要求 |
+## Cloud Resources
 
-项目分析不再维护包内的 taste-project 副本。调度包与 `skills/research/taste-project/` 必须一起可读；目录缺失时只读恢复仓库里的相应目录，不执行仓库脚本或安装软件。若必须在其他目录加载，明确传入 taste-project 的实际位置，不把旧副本当作当前规范。
+- Source list Google Doc (`优秀 AI 信息源`): `1cbzQ5e92UxDC75cdemcvUs1Q7SpOZ97htfLb5s0mTSU` (always skip `aihot.news`).
+- State spreadsheet (`digest-state`): `1vwcRuszpGjQxClznuAqWPPUb6dvFp52Hlf5n26ZCtnc` (`pointer`, `seen_items`, `projects`, `outbox`).
+- Drive `daily` folder: `1nNxETkBFwvlvhHDQ678dGTvaSarPeQ4m`.
+- Drive `projects` folder: `1bB_VjqSzsDxPKTM51XmKBo1gc7oWiXQ7`.
+- Drive `archive` folder: `1ZFpDtYjfRvwdKGzRhOVatfBZM1RZUMZs`.
 
-本目录放在 `scheduler/` 是因为它是定时任务交接包，不参与 skillshare 的普通技能同步；`skills/` 才是常规技能同步源。不要为分发本任务而复制并长期维护另一套项目分析规范。
+## Workflow
 
-## 2 存储与产物
+### Stage 0: Read State and Time Window (Main Agent)
 
-日期以 **Asia/Shanghai** 为准。`<STORAGE>` 为晨报数据根目录，**默认直接内聚在技能目录内**：`scheduler/ai-morning-digest/data`（杜绝在外部如 `~/data` 单开目录）；如需自定义亦可通过本地 `deployment.local.json` 的 `storage_root` 指定。
+1. Read `digest-state` tabs `pointer`, `seen_items` (7-day article/paper dedup), and `projects` (30-day GitHub project dedup and catalog).
+2. Define the active window `[last_analysis_time, current_analysis_time]` in `Asia/Shanghai`.
 
-全局常驻状态文件：
-- `<STORAGE>/seen.json`：全局时间指针与增量去重总表（记录 `last_analysis_time`、`current_analysis_time` 及近期已收录项目/文章 URL）
-- `<STORAGE>/projects.json`：全局固定项目库（维护所有已分析 GitHub 仓库的全量历史、分析时间及近 30 天去重基线）
+### Stage 1: Fetch and Deduplicate (1 Fetcher Sub-Agent)
 
-单期产物目录结构：
-```text
-<STORAGE>/daily/YYYY-MM-DD/
-├── report.html              当期阅读页，内联 CSS、JS 与正文
-├── seen.json                当期去重快照：date、timezone、items（url/source/title/date）
-├── articles.json            当期完整正文、引用与覆盖说明
-├── history.json             此前已发布的完整历史快照
-├── publication.json         发布成功状态、URL与源码提交
-├── articles/<源>/<篇名>.md   可选的逐篇Markdown导出，不能与主正文分叉
-└── intermediate/
-    ├── candidates.json      候选与原文、来源时间、获取限制
-    ├── items.json           最终收录内容
-    ├── sources/<源>/        原始列表页与正文
-    ├── repos/<owner-repo>/  taste-project 报告与证据记录
-    ├── lenny/               当日 Lenny 邮件正文（兼容既有目录）
-    ├── newsletters/<源>/   其他邮件源的实际正文
-    └── fill-notes/notes.md  收录、省略、获取失败及原因
-```
+Dispatch one fetcher sub-agent with the time window, `seen_items`, and `projects` snapshot:
 
-项目报告明确输出到当期 `intermediate/repos/<owner-repo>/`，这是本任务传给 taste-project 的输出路径，不改动该 skill 的默认目录规则。用于网页的项目正文必须保留报告的完整适用结构，不能另写几段概括来替代报告。可按当前交付要求将 Markdown 正确渲染到当期 Site。
+- Read `优秀 AI 信息源` and skip `aihot.news`.
+- Check all configured streaming web sources and Gmail senders (`lenny@substack.com`, `lenny+how-i-ai@substack.com`, `lenny+community-wisdom@substack.com`, `pragmaticengineer@substack.com`, `pragmaticengineer+deepdives@substack.com`, `aisupremacy+agi@substack.com`, `aisupremacy+guides@substack.com`, `aisupremacy+siphon@substack.com`, `aiblewmymind@substack.com`, `aiblewmymind@mail.beehiiv.com`), plus a fallback inbox scan in the same time window to catch sender alias changes.
+- Check GitHub Trending daily board and Hugging Face Papers daily board with no whitelist or de-prioritization filtering.
+- Deduplicate articles and papers against 7-day `seen_items`; select up to 4 GitHub Trending repos by daily rank after skipping repos already in 30-day `projects`.
+- Return only a clean grouped candidate list (title, exact URL, source, timestamp), `selection_log` draft (`included`, `deduplicated`, `excluded`), and `limitations`.
 
-按信息源分组，不改成资讯/技术/思考分类。左栏为信息源文件夹与每篇文章节点，根级 `今日.md` 是总览；简略内容与项目分析放在同一篇，不拆成两个阅读文件。右栏只显示当前篇大纲。此次合并的是调度说明文档，不把不同主题的日报文章合并。
+### Stage 2: Parallel Reading and Writing (Per-Type Sub-Agents)
 
-## 3 选材、名单与去重
+Dispatch writer sub-agents in parallel by document category. Keep every article, paper, and repository as an individual item without merging. Preserve exact source URLs and empirical figures. When adding a new document category with a dedicated prompt in the future, add a new parallel sub-agent here.
 
-### 3.1 时间指针机制与选材窗口
+- **Sub-Agent A (Blogs, Columns, and Newsletters)**: Read each full source page or email body. Write an in-depth Chinese analysis of 1,200 to 3,000 Chinese characters (max 4,000), never a short preview. Cover the core problem, key arguments or technical mechanisms, real-world cases or empirical data, actionable takeaways, and boundaries. Include `lead`, `key_points`, `terms`, `analysis`, and `source_url`.
+- **Sub-Agent B (Hugging Face Papers)**: Read the daily top 10 paper pages (falling back to arXiv HTML if needed). Keep the standard morning-digest paper format with `lead`, `key_points`, `terms`, `analysis`, and `source_url`.
+- **Sub-Agent C (GitHub Trending Projects, on demand)**: Dispatch only when Stage 1 yields new unrecorded repos. Follow the 9-chapter repository analysis structure in plain Chinese (avoid function names and file paths outside Chapter 7 tree and Chapter 8 verification evidence):
+  1. Project URL and background
+  2. Problem solved and evolution history (how a lightweight student MVP would solve it vs. production-grade concerns and trade-offs)
+  3. Glossary (`terms`)
+  4. Use cases and user stories
+  5. How to run it
+  6. End-to-end architecture and workflow
+  7. Repository metadata and directory tree
+  8. Completeness verification
+  9. Recent iteration direction (up to 10 merged PRs from the past month with real links, dates, and changes) plus Similar Competitors (first check `已调研项目` against `one_liner` and `tags` in `digest-state.projects` and write `无` with no explanation if none match; then list high-confidence well-known projects without extra search, or `无`).
+  Do not include `lead` or `key_points` for GitHub projects. Always provide `one_liner`, `tags`, `category_id`, and `category_label`.
 
-**时间指针机制（Time Pointer / Watermark）**：
-AI 晨报采用基于时间水印的增量流式捕获机制，彻底废弃静态“模糊回溯”或人为凑数。系统在 `data/seen.json` 中持久化记录并维护上一次成功分析的时间指针 **`last_analysis_time`**（精确至 ISO 8601 / 秒级，时区为 Asia/Shanghai）。
+### Stage 3: Assemble, Persist in Strict Order, and Report (Main Agent)
 
-1. **动态选材窗口**：本次分析的时间窗口严格界定为：
-   $$\text{Window} = [\text{last\_analysis\_time},\ \text{current\_analysis\_time}]$$
-   即**只分析“上次分析时间”至“本次触发时间”之间新发布的所有内容**。
-2. **指针更新与流转**：
-   * 每次任务开始时，首先读取上次保存的 `last_analysis_time`；若为全新初始化或无历史记录，默认基线为当前时间回溯 24 小时（例如昨天的此时点，即常规的“昨天”）；
-   * 本期晨报生成并成功交付后，将本次触发时间 `current_analysis_time` 写入并固化为新的 `last_analysis_time`；
-   * **消除断层与防重**：若遇周末断更、系统维护或偶发延迟执行，时间指针会自动跨越间隔（例如周一执行时覆盖周五到周一的完整增量，绝不遗漏周末重大新闻）；同日多次触发或重试时，指针亦能保证绝不重复收录当天已处理过的内容。
-3. **两类信息源的分流选材规则**：
-   * **类型 A：流式发布源（博客、官方新闻、技术公告、邮件等）**：严格以时间指针为准，核验实际发布时间是否落在 `[last_analysis_time, current_analysis_time]` 区间内；区间内无新内容的源，如实记录“无新动态”并直接省略，严禁向前翻捡指针以前的陈旧文章；
-   * **类型 B：天级榜单与每日聚合源（GitHub Trending、Hugging Face Papers 等）**：这类源以“天”为原生更新维度，直接**查看当天的最新榜单/快照即可**（无需套用细粒度时间指针，当天榜单即代表今日内容）；选材时严格结合下述“项目 1 个月去重”与“论文近三天去重”规则，确保不重复分析。
+1. Check `daily` and `projects` for existing same-name files before creating new ones. Move any existing file to `archive` with a timestamp suffix first.
+2. Write `YYYY-MM-DD.json` into `daily` (containing `date`, `title`, `site_url: "./index.html"`, `project_library_url: "./projects.html"`, `coverage`, `selection_log`, `limitations`, and `articles`).
+3. For each new GitHub project, write a standalone `<article_id>.json` into `projects` (containing `key`, `name`, `repo_url`, `category_id`, `category_label`, `one_liner`, `tags`, `edition_date`, `edition_url: "./index.html"`, and the full `article` object).
+4. **Cloud Fallback**: If background policy denies direct Drive file creation, split each JSON into chunks of at most 45,000 characters and append them to the `outbox` tab in `digest-state` (`target_folder_id`, `filename`, `part_index`, `total_parts`, `json_chunk`, `status="PENDING"`, `result_note=""`) for the bound Apps Script (`morning_digest_cloud_sync.gs`) to assemble and archive automatically.
+5. **Update State Last**: Only after JSON files are created directly or written completely to `outbox`, update `digest-state` in place: append new repos (with `one_liner` and `tags`) to `projects`, append new articles and papers to `seen_items` while removing rows older than 7 days, and finally advance `pointer` (`last_analysis_time`, `current_analysis_time`, `latest_date`). If both persistence paths fail, do not advance `pointer`.
+6. Report total item count, full `selection_log` breakdown, `limitations`, and Drive links to `YYYY-MM-DD.json`, any new project JSONs, and `digest-state`.
 
-**单源选材原则（不限单篇）**：各信息源绝非“只选 1 篇”。凡符合上述选材时间（指针区间或天级今日榜单）且命中白名单的高价值内容均应纳选；特别是 **GitHub Trending 建议单日选取 2～4 个优质仓库** 分别展开深度分析；主流厂商官方博客在此区间内有多篇重要发布时亦应全量收录，受博客与仓库合计最多 20 篇的总容量约束。
+## Gotchas
 
-| 对象 | 上限与优先级 |
-| --- | --- |
-| 博客与仓库合计 | 最多 20 篇，不限单源唯一；GitHub Trending 建议单日选 2～4 个优质项目；优先白名单与 Agent runtime、会话编排、沙箱、权限、评测、模型服务有关的内容 |
-| HF Papers | 最多 10 篇，优先白名单；阅读原论文后简洁呈现，降权纯模型层训练细节 |
-| GitHub 项目 | 按白名单和相关度选材；所有入选项目均直接按 taste-project，不因名单外而降成自创简报；遵守近一个月去重原则 |
-
-### 3.2 白名单与黑名单
-
-匹配不区分大小写，标题、描述、topics 或 README 首段命中任一即可：
-
-AI、人工智能、agent、agents、LLM、GPT、Claude、Gemini、提示词、prompt、prompts、skill、skills、工作流、workflow、coding agent、个人工作流、RAG、MCP、tool use、function calling、sandbox、评测、eval、agent runtime、orchestration。
-
-明确降权：纯模型层训练细节、逐层训练、仅 loss 或数据配比且没有系统、产品或工作流含义的内容，除非与上述方向有强相关。
-
-GitHub 仓库黑名单目前为空；后续明确加入的项目整仓不收录。名单统一在本节维护。
-
-### 3.3 去重与邮件
-
-去重分为两层机制：
-1. **普通文章与论文（近三天去重）**：对照近三天 `seen.json`，按 URL 或“源＋标题＋日期”去重，同源同一事件合并。记录缺失时尽力从近三天成品恢复；无法恢复就说明覆盖缺口。
-2. **GitHub 项目（近一个月 / 30 天去重）**：GitHub 仓库分析执行严格的**一个月去重原则**。选材时必须对照固定项目库（`projects.json` 及近 30 天历史快照）。若某项目在过去 30 天内已有过完整深度分析，原则上**不再重复收录与分析**，以保障晨报视野覆盖面与项目库多样性；只有当该项目在 30 天内发生了颠覆性架构重构、破圈级新大版本发布（并在 fill-notes 中明确对比依据）时才例外允许；超过 1 个月的项目若再度登上 Trending 榜单或有重大演进，可作为新版本对照进行追加或更新分析。
-
-每次必查以下邮件源的实际邮件，按第 3.1 节的时间指针区间筛选，并对照近三天记录去重；Lenny 当日邮件仍必查。先核对实际 From 地址及原文链接，不只凭显示名称；搜索摘要不能替代正文。
-
-| 邮件源 | 已核实的发件地址 |
-| --- | --- |
-| Lenny's Newsletter / How I AI | `lenny@substack.com`、`lenny+how-i-ai@substack.com` |
-| The Pragmatic Engineer / Deepdives | `pragmaticengineer@substack.com`、`pragmaticengineer+deepdives@substack.com` |
-| AI Supremacy / AGI / Guides | `aisupremacy+agi@substack.com`、`aisupremacy+guides@substack.com` |
-| Daria from AI Blew My Mind | `aiblewmymind@mail.beehiiv.com` |
-
-以上地址于 2026-11-10 根据实际邮件头核实。Daria 也有通过 AI Supremacy Guides 合作发布的邮件，已由该地址覆盖，不重复收录；不能仅凭作者名就把其他未核实地址视为同一来源。发现同刊其他实际发件地址时先核实归属，再记录本次来源范围。
-
-仅整理取得的文字，未读逐字稿或未听音频时不声称完成。没有新邮件如实记录，不重复旧文凑数。用户列举的历史文章只是来源识别示例，不因此强制当日收录；新增源仍遵守选材相关度、篇数上限、发布日标注与去重规则。保留原有所有信息源和跳过 AIHOT 的要求。
-
-## 4 写作与项目分析
-
-### 4.1 非项目文章：按类型读取完整规范
-
-先读 [article-summary](reference/article-summary.md)。它已完整替换旧文章总结提示词；旧 reference 内容及历史成品的短摘要写法不再作为生成依据。
-
-- 所有非项目文章先执行基础规范：先读原文，保留作者的主要贡献、关键方法、论证与证据；导读概括价值，正文另有充分展开，不能把导读拆成短段冒充正文。
-- 论文在基础规范上执行“论文专用写法”：回答研究范围、学术价值、问题与出发思路、具体尝试、结果与验证、进一步规划与思考。正文讲清各环节衔接、代表性结果及证据边界，未来规划和编辑判断与已验证结果分开。
-- 非论文、非项目文章中提出一种技术的文章，再执行“技术文章专用写法”：沿问题、思路与机制、实现中的问题和解决措施、成果、后续规划展开。只写原文支持的内容，不强造实验、困难或计划，也不机械套论文栏目。
-- 普通新闻、博客、访谈按其实际内容使用基础规范；模型发布仍依次说明发布与使用情况（灰度/全量、时间、平台）、主打核心能力、其他官方重点，未公布内容明确标注。
-
-正文用中文，每篇不超过 4000 中文字，遵守来源许可和引用限制。精简重复与次要细节，不牺牲理解方法所需的过程和支持结论的关键结果；不以更多小标题代替内容，不映射用户的个人项目或推测其需求。标题、导读、正文、引用与复制文本保持一致。具体用户要求优先；`bro` 可选且只做最后一遍语感，不得削弱技术判断。
-
-### 4.2 项目直接使用 taste-project
-
-每个入选项目必须先读 [taste-project/SKILL.md](../../skills/research/taste-project/SKILL.md)，再按其路由读取对应约束。日报默认是“初步了解整个项目仓库”，完整使用其 [初识项目仓库](../../skills/research/taste-project/reference/first-understand-project-repository.md) 要求；用户明确改为单能力或深入分析时再选相应分支。
-
-不自行另定轻量版结构，不把“用了 taste-project”理解为只参考几个词。项目地址、分析基线、背景、解决的问题、名词表、场景、用户故事、运行方式、整体链路、仓库信息、完成度与近期迭代等必须内容，以该 skill 当前原文为准；标题编号、表格、图和证据表达同样遵循原文。
-
-按 skill 规定核验当前实现、入口与测试，区分文档声明、源码判断和本次运行结果；PR 取样遵循其“近一个月内最多 10 个已合并 PR”口径，分析实际改动，不用一个 PR 或标题列表替代。证据不足就写清缺口，不推断功能不存在。本任务默认只读，不安装、运行项目代码或复现实验。
-
-项目介绍除用途外，重点说明经官方文档或源码核实的具体功能、解决的问题、相较于直接使用通用 Agent 的实际增益，以及集成或自动化机制。不能因举例就假定支持编译、格式、死锁等具体能力；证据不足明确标注。
-
-项目研究允许按需继续读取源码、文档、PR 与外部材料，不能被文章摘要阶段“不要重新抓取”的规则阻断。信息获取方式遵循 taste-project，不额外固化为一套探索流程。
-
-## 5 执行与质量检查
-
-将机械整理与内容判断分开，避免抓取、写作、排版互相干扰；模型档位遵循执行环境允许的配置，不为降低成本削减必要研究。
-
-| 阶段 | 输入 | 产出 |
-| --- | --- | --- |
-| 抓取与筛选 | 源清单、近三天记录 | 含实际原文与失败原因的 candidates.json |
-| 写作与项目研究 | 候选原文；项目另加载 taste-project | articles 与项目报告，证据范围明确 |
-| 排版与校验 | 正文和 items.json | report.html、检查结果、seen.json |
-
-普通文章写作以已取得原文为基础，不联网编造背景；缺失关键原文时回到获取环节或说明限制。项目研究按上一节补齐证据。写作者不同时修改 HTML、去重或 seen；填装者不重新压缩项目报告或改写结论。来源失败在候选与总览记录，不能被解释成“今天没有新闻”。
-
-### 5.1 多阶梯次抓取（尽最大努力获取）
-
-针对官方源经常出现的“列表页返回 SPA 空壳/导航残缺（如 Google Gemini 博客列表）”、“直连 403 Forbidden / 反爬拦截（如 Anthropic、Solo.io、OpenAI）”以及“列表偏旧有延迟（如 Meta）”等问题，抓取流程必须执行多阶梯次兜底策略，绝不因单次直连受阻而轻易放弃：
-
-1. **第 1 阶：官方结构化入口与交叉链接（Direct & Cross-link）**：
-   * 列表页直连若遇前端动态空壳，检查是否存在官方 RSS/Atom 订阅源（如 Google Blog RSS、Substack RSS）、官方新闻汇总中心（Newsroom）或同集团关联源交叉链接（如从 DeepMind 交叉索引进入 Google 博客正文）。
-2. **第 2 阶：搜索引擎辅助定点穿透（Search-assisted Discovery）**：
-   * 针对列表页残缺或 403 阻断的源，以该源域名为范围，通过搜索引擎在时间窗口内检索最新官方文章标题与确切 URL（例如 `site:blog.google "Gemini"` 或相关关键词）；
-   * 获取到具体文章的官方真实 URL 后，再直接抓取该具体单篇正文（单篇详情页通常不含复杂动态渲染或高强度反爬，成功率显著高于动态栏目列表页）；严禁仅凭搜索摘要脑补正文，必须以取得的实际正文为准。
-3. **第 3 阶：工具与请求协议轮换（Tool / Protocol Rotation）**：
-   * 直连 403 或本地连接超时时，切换备用网页抓取工具、变更标准浏览器 User-Agent 请求头或调用无头浏览器渲染通道。
-
-### 5.2 失败占位与显式标记机制（杜绝静默遗漏）
-
-当且仅当穷尽上述三阶手段仍无法完整抓取时，**严禁静默吞掉或将抓取失败谎称为“今日无新闻”**，必须通过以下分级占位机制在产物中显式标记：
-
-1. **单篇正文占位（已发现新文章但正文获取失败）**：
-   * 若通过列表、交叉链接或搜索已确知官方在此区间内发布了某篇重要文章，但正文遭遇 403/权限阻断/格式无法解析导致无法取得正文：
-   * **必须在 `articles.json` 中生成单篇占位条目**！
-     - 标题注明：`[访问受限] <官方原标题>`；
-     - `source` 与 `date` 如实填写官方来源与实际发布时间；
-     - `original_url` 必须填入该篇官方真实有效链接；
-     - `lead` 与正文统一使用醒目的故障占位格式：
-       > ⚠️ **官方原文访问受限（抓取失败占位）**  
-       > 该文章已于官方发布，但在自动抓取正文时遭遇访问受限（如 HTTP 403 / 反爬校验 / 格式无法解析）。为保障晨报视野完整性，特在此保留官方入口与占位卡片，读者可点击标题下方“原文”链接前往官方站点手动查阅。
-   * 此机制确保读者在左侧导航树和阅读器目录中清晰看到该文章的存在，随时可一键跳转官网阅读，绝不丢失增量视野。
-2. **整源覆盖受限占位（列表页完全失效且无新索引）**：
-   * 若某官方源列表页完全返回空壳且搜索也未能穿透索引出新增，无法确认是否有新发文章：
-   * **必须在当期总览页 `articles.json` 的 `limitations`（验证与限制）中显式挂载【覆盖受限】条目**，指名道姓记录受影响源与异常类型（例如：`【抓取受限】Google Gemini 博客：栏目列表页返回 SPA 动态空壳，经交叉索引与搜索未定位到增量，可能存在覆盖盲区`）；
-3. **底层过程数据留痕**：
-   * `intermediate/candidates.json`：如实保留该源记录，状态标记为 `failed`，并记录尝试过的所有 URL、报错状态码与梯次重试记录；
-   * `intermediate/fill-notes/notes.md`：详细记录未能取得原文的具体技术障碍，供后续维护与复盘追溯。
-
-### 5.3 阅读布局、术语与原文入口
-
-采用 2026-11-11 用户参考图对齐后的阅读室：浅灰应用外壳、白色正文、珊瑚色线性图标、玫红色加粗与亮粉色行内代码，标题旁短斜杠。桌面左信息源树、中央单篇、右当前篇大纲；左右栏分隔线可拖动并保持宽度。最左列提供今日阅读、跨期搜索、中央日历，左下明暗主题切换并保持设置。默认按北京时间打开今天，缺失时明确提示。日历只标记真实已归档日期，点击在同一阅读器查看完整当日内容，不伪造历史。
-
-当期来源与内容不变，历史归档保存完整正文、原图和引用。使用 `templates/reader-shell.html` 与 [FILL.md](templates/FILL.md)，新锚点带日期和文章 ID；旧当期 `#doc-ID` 保持兼容。
-
-正文里读者可能不熟悉的名词用点状下划线等明显但不干扰阅读的样式标识；点击词语就在附近显示简短、准确、与上下文相关的小浮窗，支持鼠标、触屏、键盘与关闭。兼顾技术背景，不过度标注；不另设独立术语栏或文末集中解释区。taste-project 要求的名词表仍保留，两者用途不同。
-
-**每篇标题下显著展示可点击的“原文”链接，项目则展示“官方项目”链接**，直达文章、论文或官方仓库，不只放在文末引用。保留文末原文与参考资料，准确原文 URL 也纳入单篇及整期复制文本。所有正文中的项目地址、原文和来源链接都须可点击，不留下未处理的 Markdown 链接。
-
-### 5.4 Codex 入口与复制备选
-
-标题下只保留平铺的一行：一个准确的原文/官方项目链接、一个“复制”按钮、一个直接打开 Codex 的图标。没有弹出菜单、操作卡片、折叠操作层、说明小字或重复裸 URL，不单设复制分析请求按钮。图标有无障碍名称和 44px 触控区。
-
-- Codex 使用正确 URI 编码的 `codex://new?prompt=`，预填日报日期、当前标题、可访问的当期 Site URL 和日期/文章锚点、“我的问题：”；项目页同一请求加入准确 GitHub 地址及使用 taste-project 深入分析的约束。
-- 只打开并预填，不自动发送或执行。私有页面仍需对应登录和权限，不能假装已读；这些说明留在预填请求中，不常驻页面。
-- 复制包含当前文章完整正文和准确来源 URL，总览复制整期；失败才显示并选中只读文本框。保留引用和手机备选，不把全文塞进深链接、不公开私有站点或写入认证令牌。
-
-### 5.5 移动布局与验证
-
-移动优先，重点适配 iPhone 17 Pro Max，并兼顾 320–440 CSS 像素和横屏。保留 `viewport-fit=cover`、安全区域边距和浏览器缩放；手机正文约 16–17px，输入框至少 16px，避免 iOS 聚焦自动缩放。长标题、链接与代码不能撑宽页面，表格和代码块可局部横向滚动；主要按钮触控区域至少 44px。
-
-手机文件列表与大纲用可开关抽屉，关闭时不能遮挡阅读或保留不可见的键盘焦点。术语浮窗保持在可视范围内并易于关闭；保留 Codex 与复制功能。
-
-当前模板使用 `/*DATA*/{}`、`/*HISTORY*/[]` 与 `/*PROJECTS*/{}` 三个数据标记，组装与完整归档恢复方式见 [FILL.md](templates/FILL.md)。旧四占位检查脚本不适用于新阅读器；使用当前 JS 语法与数据检查、资源检查和受支持的浏览器验证。
-
-发布前尽力验证 320、440、956 CSS 像素布局、横向溢出、抽屉、文章和大纲锚点、双栏拖动及保持、主题及保持、日历实际日期与缺失日期、跨期搜索、术语、复制及失败备选、原图与引用。分别说明网页、实体设备、用户本机 Codex 的实际测试范围。每日新一期带上已验证的历史归档；每个独立日版是截至发布时间的快照，不声称旧链接能自动取得以后内容。
-
-## 6 调度与交接
-
-### 6.1 时间与投递
-
-| 项目 | 约定 |
-| --- | --- |
-| 时区 | Asia/Shanghai |
-| 当前任务 | 每日早上约 8 点，按已保存自动化的 enabled 状态与具体时间执行 |
-| 投递 | 发起任务的对话 |
-| 当前 cron 表达 | `CRON_TZ=Asia/Shanghai 0 8 * * *`；反映当前每日任务，不另建调度 |
-
-不因文档整理而重建、暂停、改时间或复制自动化。实际时间、环境和提示词以已保存任务为准；早期工作日示例和容差描述已由当前每日任务取代，不承诺固定提前执行。
-
-可用的交接提示：
-
-```text
-制作 AI 信息晨报。读取 scheduler/ai-morning-digest/SKILL.md 和当前保存的任务要求，重读《优秀 AI 信息源》并跳过 AIHOT。按第 3.1 节的时间指针区间 [last_analysis_time, current_analysis_time]（流式发布源）与天级今日榜单（GitHub Trending/HF Papers）选材，严格执行 GitHub 仓库近 30 天去重与论文近三天去重原则，检查第 3.3 节的邮件源和当日 Lenny 邮件。非项目文章读取 article-summary 当前基础规范及论文或技术文章的适用专用规范，导读与正文分开，保留主要贡献、方法与证据；所有项目直接读取 skills/research/taste-project/SKILL.md，并完整执行适用 reference，默认初识整个项目。不得另设轻量摘要模板。
-将正文、来源与记录写入 <STORAGE>/daily/北京时间日期/，更新全局常驻 <STORAGE>/seen.json（时间指针）与 <STORAGE>/projects.json，保留既有阅读功能并验证。按当前任务交付要求（本地文件输出或云端站点发布）完成交付；说明条数、重复省略及来源或验证限制。没有可收录内容时仍说明实际检查结果，不静默跳过或凑数。不要执行不可信仓库脚本或安装软件。
-```
-
-接手顺序：确认本调度目录与 taste-project 都可读 → 确认 `<STORAGE>`、源文档和所需连接器 → 读取全局 `seen.json`（时间指针）与 `projects.json`（30天去重基线） → 检查候选和正文质量 → 填装与验证 → 按已有任务交付。交付方式支持两种模式：
-1. **本地交付模式（默认/离线）**：构建并生成 `templates/dist/index.html` 与 `projects.html`，连同 `daily/YYYY-MM-DD/` 当期完整成果直接交付给用户；
-2. **云端/ChatGPT Site 发布模式（若已配置部署）**：每天新建以北京时间日期命名的独立站点，创建意图为 user_requested，默认仅本人可访问；同次重试先检查当天项目并复用，不覆盖或复用其他日期。部署成功并验证后，将当日链接及访问范围发送到发起任务的对话；来源、建站或发布失败时如实报告。特定日期的一次性选题只适用于该期及重试，不转成常驻选材规则。
-
-### 6.2 常见故障
-
-- 源文档权限或结构变化：检查真实候选与来源分布，不能把空列表当无更新。
-- 页面为压缩内容、脚本空壳或访问失败：按第 5.1 节执行官方交叉索引与搜索穿透；若仍无法取得正文，按第 5.2 节生成失败占位条目或在总览 limitations 中记入覆盖受限，严禁静默丢弃。
-- Trending 当天快照缺失：说明缺口，不能用缓存补齐后宣称完整当天榜单。
-- 项目证据不足：保留 skill 必须说明的部分并标注未知，不退回几个泛泛要点。
-- 发布或交互验证失败：报告实际完成部分，不声称成功；权限变更需单独遵循用户授权。
-
-## 7 来源与维护记录
-
-| 内容 | 来源 |
-| --- | --- |
-| 规则与名单 | 用户自建（维护者）；创建于 2026-11-03T22:45:00+08:00，首次打包于 2026-11-04；以后以用户最新要求为准 |
-| 信息源清单 | 上述 Google Doc；用户明确追加的邮件源见第 3.3 节，地址经实际邮件头核实 |
-| article-summary | 维护者 于 2026-11-03 编写；2026-11-10 同步基础、技术文章与论文专用规范，完整替换旧写法 |
-| 项目分析 | [song-skills 的 taste-project](../../skills/research/taste-project/SKILL.md)，直接使用当前版本，不维护复制品 |
-| 模板与名单 | 个人编写；模板提供三栏与响应式阅读布局 |
-| 示例 | 2026-11-04 真实成品，仅作版式参考 |
-
-2026-11-04 曾将 article-summary 合入 reference，并将 taste-project 的 `cf09a07` 版本复制为 repo-analysis；同时将存储根改为可配置、加入结构检查脚本。2026-11-09 按用户要求将 HANDOFF、SOURCE、sources、routine、whitelist、blacklist 六份短文件合并至本文件，删除旧项目分析副本，恢复直接引用 taste-project；同时修复入口与模板说明。历史内容可从 Git 提交恢复，不将旧副本当现行规范。
-
-2026-11-10 同步当前日报的非项目文章基础规范、技术文章与论文专用写法，补齐标题下原文入口、Codex/复制和移动阅读要求，并消除模板填法中的旧摘要提示；加入用户指定的四类邮件源及去重要求；保留 taste-project、选材与实际调度，不固化过期的一次性选题。
-
-2026-11-11 按用户要求将 [Solo.io Blog](https://www.solo.io/blog) 加入《优秀 AI 信息源》及现有晨报自动化；作为常驻网页来源，继续按最近发布日、相关度与近三天去重规则检查实际文章，不把旧文当当天首发。网页源清单仍以 Google Doc 为准，不另建重复清单。
-
-2026-11-11 按新参考图更新阅读器、双栏拖动、日历归档、跨期搜索与明暗主题。保留平铺复制/Codex 图标。历史现已核验 11/04–11/11 共 8 期，含独立的 CoworkOS 全译与历史论文图；后续归档按日期延续，不将此次日期范围固化为上限。
-
-2026-11-11 按近景参考进一步对齐文字选中态、表格、引用、H1–H6、链接、代码、列表和辅助排版，深浅主题分别处理。精确颜色和检查要求见 templates/FILL.md；正文和归档保持不变。
-
-2026-11-13 按用户要求将 [ComputeSDK Blog](https://www.computesdk.com/blog) 加入《优秀 AI 信息源》及现有晨报自动化；作为常驻网页来源，按最近发布日、相关度与近三天去重规则检查实际文章，不把旧文当当天首发。网页源清单仍以 Google Doc 为准，不另建重复清单。
-
-## 8 公共规范与私有部署配置
-
-本目录仅同步通用流程、模板和示例。信息源文档地址、存储根、当前站点/项目库身份和恢复基线写入未入库的 `deployment.local.json`，不写入公共模板或提交。项目库更新按 [PROJECT_LIBRARY.md](templates/PROJECT_LIBRARY.md)；通用写作补充见 [article-summary.md](reference/article-summary.md) 的术语、分类与证据边界章节。实际自动化是独立保存的配置，修改仓库不会改动其时间、启用状态或提示词。同步后明确报告哪些规则进入文件，哪些仍是部署方约定。
-
-维护模板时以分文件源码为准，重新生成 `reader-shell.html`，不要单独维护另一份嵌入脚本。`report.html` 与 `check_report.py` 为历史兼容材料，不用于当前阅读器生成或验收。
+- Never advance `pointer` before JSON persistence succeeds, or missed items will be skipped on the next run.
+- Always run the Gmail fallback scan in addition to known sender addresses so alias changes are never missed.
+- Do not fabricate details for truncated emails or blocked pages; record them transparently in `limitations`.
