@@ -7,4 +7,3 @@
 统一入口：[ai-morning-digest/SKILL.md](ai-morning-digest/SKILL.md)。当前版本采用纯云端 Google Drive 工作流，通过 `digest-state` 管理时间指针、去重、项目库与失败回退，并按文档类型调度独立子代理。
 
 - Google Drive 文档、表格与文件夹 ID，以及完整的分阶段执行规则，统一以 `SKILL.md` 为准。
-- `ai-morning-digest/reference/`、`templates/` 与 [examples/2026-11-04-report.html](ai-morning-digest/examples/2026-11-04-report.html) 是旧版本地阅读页流程的历史兼容资产，不是当前云端流程的执行依赖。
